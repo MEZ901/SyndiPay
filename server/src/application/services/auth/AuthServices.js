@@ -27,6 +27,27 @@ class AuthServices {
     };
   };
 
+  validateUserCredentials = async (userCredentials) => {
+    await this.validateRegisterInputs(userCredentials);
+    await this.validateEmailUnique(userCredentials.email);
+    await this.validateUserNameUnique(userCredentials.userName);
+  };
+
+  prepareUserCredentials = async (userCredentials) => {
+    delete userCredentials.confirmPassword;
+    userCredentials.password = await this.hashPassword(
+      userCredentials.password
+    );
+  };
+
+  generateTokens = async (user) => {
+    const accessToken = await this.generateAccessToken(user);
+    const refreshToken = await this.generateRefreshToken({
+      id: user.id,
+    });
+    return { accessToken, refreshToken };
+  };
+
   validateRegisterInputs = async (data) => {
     await validateData(data, "register");
   };

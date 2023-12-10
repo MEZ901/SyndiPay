@@ -4,27 +4,14 @@ class RegisterUseCase {
   }
 
   execute = async (userCredentials) => {
-    await this.authServices.validateRegisterInputs(userCredentials);
+    await this.authServices.validateUserCredentials(userCredentials);
 
-    delete userCredentials.confirmPassword;
+    await this.authServices.prepareUserCredentials(userCredentials);
 
-    await this.authServices.validateEmailUnique(userCredentials.email);
+    const user = await this.authServices.register(userCredentials);
 
-    await this.authServices.validateUserNameUnique(userCredentials.userName);
-
-    const hashedPassword = await this.authServices.hashPassword(
-      userCredentials.password
-    );
-
-    const user = await this.authServices.register({
-      ...userCredentials,
-      password: hashedPassword,
-    });
-
-    const accessToken = await this.authServices.generateAccessToken(user);
-    const refreshToken = await this.authServices.generateRefreshToken({
-      id: user.id,
-    });
+    const { accessToken, refreshToken } =
+      await this.authServices.generateTokens(user);
 
     await this.authServices.storeRefreshTokenInDatabase(refreshToken, user.id);
 
