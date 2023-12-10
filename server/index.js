@@ -1,11 +1,5 @@
-import express from "express";
+import Server from "./src/infrastructure/webserver/Server.js";
 
-const app = express();
+const server = new Server();
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-app.listen(8080, () => {
-  console.log(`Server running on http://localhost:8080`);
-});
+server.start();
