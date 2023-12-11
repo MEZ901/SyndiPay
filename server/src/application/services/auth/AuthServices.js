@@ -112,6 +112,10 @@ class AuthServices {
     return await this.jsonWebToken.sign(payload, "30d");
   };
 
+  verifyToken = async (refreshToken) => {
+    return await this.jsonWebToken.verify(refreshToken);
+  };
+
   storeRefreshTokenInDatabase = async (refreshToken, userId) => {
     return await this.userTokenRepository.upsert(refreshToken, userId);
   };

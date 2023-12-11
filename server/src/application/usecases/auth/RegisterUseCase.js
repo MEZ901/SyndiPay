@@ -22,11 +22,8 @@ class RegisterUseCase {
         refreshToken,
       },
       data: {
-        id: user.id,
-        userName: user.userName,
-        image: user.image,
-        email: user.email,
-        isVerified: user.isVerified,
+        message: "Register successfully",
+        user,
       },
     };
   };

@@ -20,7 +20,8 @@ class LoginUseCase {
         refreshToken,
       },
       data: {
-        ...user,
+        message: "Login successfully",
+        user,
       },
     };
   };

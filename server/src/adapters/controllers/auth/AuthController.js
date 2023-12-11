@@ -49,14 +49,12 @@ class AuthController {
   logout = async (req, res) => {
     const { refresh_token } = req.cookies;
 
-    const { status, ...rest } = await this.logoutUseCase.execute(refresh_token);
+    const result = await this.logoutUseCase.execute(refresh_token);
 
-    if (status === 200) {
-      res.clearCookie("access_token");
-      res.clearCookie("refresh_token");
-    }
+    res.clearCookie("access_token");
+    res.clearCookie("refresh_token");
 
-    res.status(status).json({ ...rest });
+    res.status(result.status).json(result.data);
   };
 
   refreshToken = async (req, res) => {
