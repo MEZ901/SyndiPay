@@ -1,6 +1,7 @@
 import validateData from "../../../infrastructure/helpers/validateData.js";
 import ClientError from "../../../infrastructure/exceptions/ClientError.js";
 import NotFoundError from "../../../infrastructure/exceptions/NotFoundError.js";
+import UnauthorizedError from "../../../infrastructure/exceptions/UnauthorizedError.js";
 
 class AuthServices {
   constructor(
@@ -27,10 +28,39 @@ class AuthServices {
     };
   };
 
+  login = async (data) => {
+    const user = await this.userRepository.findByEmailOrUserName(
+      data.emailOrUserName
+    );
+
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    const isPasswordValid = await this.securityService.comparePasswords(
+      data.password,
+      user.password
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedError("Password is incorrect");
+    }
+
+    return {
+      id: user.id,
+      userName: user.userName,
+      image: user.image,
+      email: user.email,
+      isVerified: user.isVerified,
+    };
+  };
+
   validateUserCredentials = async (userCredentials) => {
-    await this.validateRegisterInputs(userCredentials);
-    await this.validateEmailUnique(userCredentials.email);
-    await this.validateUserNameUnique(userCredentials.userName);
+    await Promise.all([
+      this.validateRegisterInputs(userCredentials),
+      this.validateEmailUnique(userCredentials.email),
+      this.validateUserNameUnique(userCredentials.userName),
+    ]);
   };
 
   prepareUserCredentials = async (userCredentials) => {
@@ -41,10 +71,10 @@ class AuthServices {
   };
 
   generateTokens = async (user) => {
-    const accessToken = await this.generateAccessToken(user);
-    const refreshToken = await this.generateRefreshToken({
-      id: user.id,
-    });
+    const [accessToken, refreshToken] = await Promise.all([
+      this.generateAccessToken(user),
+      this.generateRefreshToken({ id: user.id }),
+    ]);
     return { accessToken, refreshToken };
   };
 
@@ -57,24 +87,16 @@ class AuthServices {
   };
 
   validateEmailUnique = async (email) => {
-    try {
-      await this.userRepository.findByEmail(email);
+    const user = await this.userRepository.findByEmail(email);
+    if (user) {
       throw new ClientError("Email already exists");
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        return;
-      }
     }
   };
 
   validateUserNameUnique = async (userName) => {
-    try {
-      await this.userRepository.findByUserName(userName);
-      throw new ClientError("Email already exists");
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        return;
-      }
+    const user = await this.userRepository.findByUserName(userName);
+    if (user) {
+      throw new ClientError("Username already exists");
     }
   };
 
@@ -91,12 +113,25 @@ class AuthServices {
   };
 
   storeRefreshTokenInDatabase = async (refreshToken, userId) => {
-    await this.userTokenRepository.upsert(refreshToken, userId);
+    return await this.userTokenRepository.upsert(refreshToken, userId);
   };
 
-  deleteRefreshTokenFromDatabase = async (refreshToken) => {};
+  deleteRefreshTokenFromDatabase = async (refreshToken) => {
+    const document = await this.userTokenRepository.softDeleteByToken(
+      refreshToken
+    );
+    if (!document) {
+      throw new NotFoundError("Refresh token not found in database");
+    }
+  };
 
-  checkRefreshTokenInDatabase = async (refreshToken) => {};
+  checkRefreshTokenInDatabase = async (refreshToken) => {
+    const document = await this.userTokenRepository.findByToken(refreshToken);
+    if (!document) {
+      throw new NotFoundError("Refresh token not found in database");
+    }
+    return document;
+  };
 }
 
 export default AuthServices;

@@ -31,9 +31,10 @@ class AuthController {
   };
 
   login = async (req, res) => {
-    const { email, password } = req.body;
+    const { emailOrUserName, password } = req.body;
+
     const result = await this.loginUseCase.execute({
-      email,
+      emailOrUserName,
       password,
     });
 

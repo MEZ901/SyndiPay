@@ -95,11 +95,8 @@ class BaseRepository {
    */
   findById = async (id, includeDeleted = false) => {
     const query = includeDeleted ? { _id: id } : { _id: id, isDeleted: false };
-    const document = await this.model.findOne(query);
-    if (!document) {
-      throw new NotFoundError("Document not found");
-    }
-    return document;
+
+    return await this.model.findOne(query);
   };
 
   /**
@@ -110,13 +107,15 @@ class BaseRepository {
    * @throws {NotFoundError} If the document is not found.
    */
   update = async (id, data) => {
-    const existingDoc = await this.findById(id);
-    if (existingDoc) {
-      data.updatedAt = new Date();
-      return await this.model.findByIdAndUpdate(id, data, { new: true });
-    } else {
+    const updatedDoc = await this.model.findByIdAndUpdate(id, data, {
+      new: true,
+    });
+
+    if (!updatedDoc) {
       throw new NotFoundError("Document not found or soft-deleted");
     }
+
+    return updatedDoc;
   };
 
   /**

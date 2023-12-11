@@ -14,6 +14,24 @@ class UserTokenRepository extends BaseRepository {
     );
     return document;
   };
+
+  softDeleteByToken = async (token) => {
+    const document = await this.model.findOneAndUpdate(
+      { refreshToken: token },
+      { isDeleted: true },
+      { new: true }
+    );
+    return document;
+  };
+
+  softDeleteByUserId = async (userId) => {
+    const document = await this.model.findOneAndUpdate(
+      { userId },
+      { isDeleted: true },
+      { new: true }
+    );
+    return document;
+  };
 }
 
 export default UserTokenRepository;
