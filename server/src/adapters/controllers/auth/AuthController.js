@@ -60,15 +60,13 @@ class AuthController {
   refreshToken = async (req, res) => {
     const { refresh_token } = req.cookies;
 
-    const { status, jwt, ...rest } = await this.refreshTokenUseCase.execute(
-      refresh_token
-    );
+    const result = await this.refreshTokenUseCase.execute(refresh_token);
 
-    if (jwt) {
-      res.cookie("access_token", jwt.accessToken, { httpOnly: true });
+    if (result.jwt) {
+      res.cookie("access_token", result.jwt.accessToken, { httpOnly: true });
     }
 
-    res.status(status).json({ ...rest });
+    res.status(result.status).json(result.data);
   };
 }
 

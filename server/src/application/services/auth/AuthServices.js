@@ -70,6 +70,20 @@ class AuthServices {
     );
   };
 
+  getUserCredentials = async (userId) => {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    return {
+      id: user.id,
+      userName: user.userName,
+      image: user.image,
+      email: user.email,
+      isVerified: user.isVerified,
+    };
+  };
+
   generateTokens = async (user) => {
     const [accessToken, refreshToken] = await Promise.all([
       this.generateAccessToken(user),
@@ -113,7 +127,12 @@ class AuthServices {
   };
 
   verifyToken = async (refreshToken) => {
-    return await this.jsonWebToken.verify(refreshToken);
+    const result = await this.jsonWebToken.verify(refreshToken);
+    if (!result.isValid) {
+      throw new UnauthorizedError("Invalid refresh token");
+    }
+
+    return result.decoded;
   };
 
   storeRefreshTokenInDatabase = async (refreshToken, userId) => {

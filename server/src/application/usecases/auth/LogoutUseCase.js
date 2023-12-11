@@ -1,4 +1,4 @@
-import ClientError from "../../../infrastructure/exceptions/ClientError.js";
+import UnauthorizedError from "../../../infrastructure/exceptions/UnauthorizedError.js";
 
 class LogoutUseCase {
   constructor(authServices) {
@@ -7,7 +7,7 @@ class LogoutUseCase {
 
   execute = async (refreshToken) => {
     if (!refreshToken) {
-      throw new ClientError("Missing refresh token");
+      throw new UnauthorizedError("Missing refresh token");
     }
 
     await this.authServices.verifyToken(refreshToken);
