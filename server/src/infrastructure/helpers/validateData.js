@@ -1,11 +1,11 @@
 import path from "path";
 import fs from "fs";
-import { fileURLToPath } from "url";
 import NotFoundError from "../exceptions/NotFoundError.js";
 import ClientError from "../exceptions/ClientError.js";
+import getCurrentDirname from "./getCurrentDirname.js";
 
 const validateData = async (data, schemaName) => {
-  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const __dirname = getCurrentDirname(import.meta.url);
 
   const schemaPath = path.join(
     __dirname,

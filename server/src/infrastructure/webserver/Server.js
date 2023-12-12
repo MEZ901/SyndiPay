@@ -3,12 +3,15 @@ import cookieParser from "cookie-parser";
 import environment from "../config/environment.js";
 import errorHandler from "./middleware/errorHandler.js";
 import DependencyInjection from "../../ioc-container/DependencyInjection.js";
+import logger from "../packages/pino/logger.js";
 
 class Server {
   constructor() {
     this.app = express();
-    this.port = environment.port;
-    this.prefix = environment.prefix;
+    this.protocol = environment.app.protocol;
+    this.host = environment.app.host;
+    this.port = environment.app.port;
+    this.prefix = environment.api.prefix;
   }
 
   setupRoutes = async () => {
@@ -32,16 +35,16 @@ class Server {
   };
 
   start = async () => {
+    this.app.listen(this.port, () => {
+      logger.info(
+        `Server running on ${this.protocol}://${this.host}:${this.port}`
+      );
+    });
+
     DependencyInjection.setup();
     this.configureMiddleware();
     await this.setupRoutes();
     this.configureErrorHandling();
-
-    this.app.listen(this.port, () => {
-      console.log(`-----------------------------------------------`);
-      console.log(`| 🚀 Server running on http://localhost:${this.port}/ |`);
-      console.log(`-----------------------------------------------`);
-    });
   };
 }
 

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import environment from "../config/environment.js";
+import logger from "../packages/pino/logger.js";
 
 mongoose.set("strictQuery", true);
 
@@ -9,13 +10,13 @@ mongoose.connect(environment.mongo.uri, {
 
 mongoose.connection
   .once("open", () => {
-    console.log("connection to database established successfully.");
+    logger.info("connection to database established successfully");
   })
   .on("error", (error) => {
-    console.log(`error while connecting to database: ${error}`);
+    logger.error(`error while connecting to database: ${error}`);
   })
   .on("disconnected", () => {
-    console.log("database connection closed.");
+    logger.info("database connection closed");
   });
 
 export default mongoose;

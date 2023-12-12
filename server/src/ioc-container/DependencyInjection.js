@@ -14,10 +14,11 @@ import RefreshTokenUseCase from "../application/usecases/auth/RefreshTokenUseCas
 import RegisterUseCase from "../application/usecases/auth/RegisterUseCase.js";
 import AuthController from "../adapters/controllers/auth/AuthController.js";
 import UserTokenRepository from "../adapters/repositories/UserTokenRepository.js";
+import getCurrentDirname from "../infrastructure/helpers/getCurrentDirname.js";
 
 class DependencyInjection {
   static setup = () => {
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const __dirname = getCurrentDirname(import.meta.url);
     const privatePemPath = path.resolve(__dirname, "../../keys/private.pem");
     const publicPemPath = path.resolve(__dirname, "../../keys/public.pem");
 
