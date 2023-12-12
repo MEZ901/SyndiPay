@@ -3,7 +3,7 @@ import mongoose from "../mongoose.js";
 const userSchema = new mongoose.Schema({
   userName: {
     type: String,
-    required: [true, "Username is required"],
+    required: true,
     unique: true,
   },
   image: {
@@ -12,12 +12,12 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, "Email is required"],
+    required: true,
     unique: true,
   },
   password: {
     type: String,
-    required: [true, "Password is required"],
+    required: true,
   },
   isVerified: {
     type: Boolean,
@@ -26,12 +26,10 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    required: true,
   },
   updatedAt: {
     type: Date,
     default: Date.now,
-    required: true,
   },
   isDeleted: {
     type: Boolean,
