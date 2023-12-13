@@ -14,7 +14,7 @@ apartmentsRoutes.get(
 
 apartmentsRoutes.post("/", asyncHandler(apartmentsController.createApartment));
 
-apartmentsRoutes.put(
+apartmentsRoutes.patch(
   "/:id",
   asyncHandler(apartmentsController.updateApartment)
 );
