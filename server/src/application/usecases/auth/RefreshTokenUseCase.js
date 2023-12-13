@@ -1,7 +1,7 @@
 import UnauthorizedError from "../../../infrastructure/exceptions/UnauthorizedError.js";
 
 class RefreshTokenUseCase {
-  constructor(authServices) {
+  constructor({ authServices }) {
     this.authServices = authServices;
   }
 

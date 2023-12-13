@@ -2,14 +2,15 @@ import validateData from "../../../infrastructure/helpers/validateData.js";
 import ClientError from "../../../infrastructure/exceptions/ClientError.js";
 import NotFoundError from "../../../infrastructure/exceptions/NotFoundError.js";
 import UnauthorizedError from "../../../infrastructure/exceptions/UnauthorizedError.js";
+import ForbiddenError from "../../../infrastructure/exceptions/ForbiddenError.js";
 
 class AuthServices {
-  constructor(
+  constructor({
     userRepository,
     userTokenRepository,
     securityService,
-    jsonWebToken
-  ) {
+    jsonWebToken,
+  }) {
     this.userRepository = userRepository;
     this.userTokenRepository = userTokenRepository;
     this.securityService = securityService;
@@ -126,10 +127,14 @@ class AuthServices {
     return await this.jsonWebToken.sign(payload, "30d");
   };
 
-  verifyToken = async (refreshToken) => {
-    const result = await this.jsonWebToken.verify(refreshToken);
+  verifyToken = async (token) => {
+    const result = await this.jsonWebToken.verify(token);
+
     if (!result.isValid) {
-      throw new UnauthorizedError("Invalid refresh token");
+      if (result.error.includes("jwt expired")) {
+        throw new ForbiddenError("Token expired");
+      }
+      throw new UnauthorizedError("Invalid token");
     }
 
     return result.decoded;

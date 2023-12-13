@@ -1,5 +1,5 @@
 class LoginUseCase {
-  constructor(authServices) {
+  constructor({ authServices }) {
     this.authServices = authServices;
   }
 

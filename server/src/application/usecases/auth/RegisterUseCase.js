@@ -1,5 +1,5 @@
 class RegisterUseCase {
-  constructor(authServices) {
+  constructor({ authServices }) {
     this.authServices = authServices;
   }
 

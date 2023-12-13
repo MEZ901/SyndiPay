@@ -1,7 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import environment from "../config/environment.js";
-import errorHandler from "./middleware/errorHandler.js";
+import errorHandler from "./interceptors/errorHandler.js";
 import DependencyInjection from "../../ioc-container/DependencyInjection.js";
 import logger from "../packages/pino/logger.js";
 
@@ -24,7 +24,7 @@ class Server {
     this.app.use(`/${this.prefix}`, routes.default);
   };
 
-  configureMiddleware = () => {
+  configureMiddlewares = () => {
     this.app.use(cookieParser());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
@@ -42,7 +42,7 @@ class Server {
     });
 
     DependencyInjection.setup();
-    this.configureMiddleware();
+    this.configureMiddlewares();
     await this.setupRoutes();
     this.configureErrorHandling();
   };

@@ -1,10 +1,10 @@
 class AuthController {
-  constructor(
+  constructor({
     loginUseCase,
     registerUseCase,
     logoutUseCase,
-    refreshTokenUseCase
-  ) {
+    refreshTokenUseCase,
+  }) {
     this.loginUseCase = loginUseCase;
     this.registerUseCase = registerUseCase;
     this.logoutUseCase = logoutUseCase;

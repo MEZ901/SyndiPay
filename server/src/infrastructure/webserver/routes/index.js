@@ -1,9 +1,12 @@
 import { Router } from "express";
 import SwaggerDocs from "../../packages/swagger/SwaggerDocs.js";
+import container from "../../../ioc-container/Container.js";
+import asyncHandler from "../interceptors/asyncHandler.js";
 import authRoutes from "./auth/authRoutes.js";
 
 const routes = Router();
 const swaggerDocs = new SwaggerDocs();
+const authMiddleware = container.resolve("authMiddleware");
 
 /**
  * @openapi
@@ -22,6 +25,8 @@ routes.get("/", (req, res) => {
 });
 
 routes.use("/auth", authRoutes);
+
+routes.use(asyncHandler(authMiddleware.authenticateUser));
 
 swaggerDocs.setup(routes);
 
