@@ -41,7 +41,7 @@ class ApartmentsController {
   };
 
   forceDeleteApartment = async (req, res) => {
-    res.status(200).json({ message: "forse delete apartment" });
+    res.status(200).json({ message: "force delete apartment" });
   };
 }
 

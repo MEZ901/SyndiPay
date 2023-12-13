@@ -3,7 +3,7 @@ class ApartmentsServices {
     this.apartmentRepository = apartmentRepository;
   }
 
-  getAllApartments = async () => {};
+  validateApartmentInputs = async (data) => {};
 }
 
 export default ApartmentsServices;

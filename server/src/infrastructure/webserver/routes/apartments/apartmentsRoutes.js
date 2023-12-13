@@ -5,9 +5,12 @@ import asyncHandler from "../../interceptors/asyncHandler.js";
 const apartmentsRoutes = Router();
 const apartmentsController = container.resolve("apartmentsController");
 
-apartmentsRoutes.get("/", asyncHandler(apartmentsController.getAll));
+apartmentsRoutes.get("/", asyncHandler(apartmentsController.getAllApartments));
 
-apartmentsRoutes.get("/:id", asyncHandler(apartmentsController.getById));
+apartmentsRoutes.get(
+  "/:id",
+  asyncHandler(apartmentsController.getApartmentById)
+);
 
 apartmentsRoutes.post("/", asyncHandler(apartmentsController.createApartment));
 
@@ -24,11 +27,6 @@ apartmentsRoutes.delete(
 apartmentsRoutes.delete(
   "/force/:id",
   asyncHandler(apartmentsController.forceDeleteApartment)
-);
-
-apartmentsRoutes.delete(
-  "/:id",
-  asyncHandler(apartmentsController.deleteApartment)
 );
 
 export default apartmentsRoutes;

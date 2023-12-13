@@ -3,6 +3,7 @@ import SwaggerDocs from "../../packages/swagger/SwaggerDocs.js";
 import container from "../../../ioc-container/Container.js";
 import asyncHandler from "../interceptors/asyncHandler.js";
 import authRoutes from "./auth/authRoutes.js";
+import apartmentsRoutes from "./apartments/apartmentsRoutes.js";
 
 const routes = Router();
 const swaggerDocs = new SwaggerDocs();
@@ -27,6 +28,8 @@ routes.get("/", (req, res) => {
 routes.use("/auth", authRoutes);
 
 routes.use(asyncHandler(authMiddleware.authenticateUser));
+
+routes.use("/apartments", apartmentsRoutes);
 
 swaggerDocs.setup(routes);
 
