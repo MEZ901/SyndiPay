@@ -51,11 +51,19 @@ class ApartmentsController {
   };
 
   deleteApartment = async (req, res) => {
-    res.status(200).json({ message: "soft delete apartment" });
+    const { id } = req.params;
+
+    const result = await this.deleteApartmentUseCase.softDelete(id);
+
+    res.status(result.status).json(result.data);
   };
 
   forceDeleteApartment = async (req, res) => {
-    res.status(200).json({ message: "force delete apartment" });
+    const { id } = req.params;
+
+    const result = await this.deleteApartmentUseCase.forceDelete(id);
+
+    res.status(result.status).json(result.data);
   };
 }
 

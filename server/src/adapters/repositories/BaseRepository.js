@@ -125,15 +125,15 @@ class BaseRepository {
    * @throws {NotFoundError} If the document is not found.
    */
   softDelete = async (id) => {
-    const document = await this.model.findByIdAndUpdate(
+    const document = await this.findById(id);
+    if (!document) {
+      throw new NotFoundError("Document not found or soft-deleted");
+    }
+    return await this.model.findByIdAndUpdate(
       id,
       { isDeleted: true },
       { new: true }
     );
-    if (!document) {
-      throw new NotFoundError("Document not found");
-    }
-    return document;
   };
 
   /**

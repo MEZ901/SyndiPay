@@ -62,6 +62,20 @@ class ApartmentsServices {
     );
     return updatedApartment;
   };
+
+  softDelete = async (apartmentId) => {
+    const softDeletedApartment = await this.apartmentRepository.softDelete(
+      apartmentId
+    );
+    return softDeletedApartment;
+  };
+
+  forceDelete = async (apartmentId) => {
+    const deletedApartment = await this.apartmentRepository.forceDelete(
+      apartmentId
+    );
+    return deletedApartment;
+  };
 }
 
 export default ApartmentsServices;
