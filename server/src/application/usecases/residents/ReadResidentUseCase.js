@@ -3,9 +3,21 @@ class ReadResidentUseCase {
     this.residentsServices = residentsServices;
   }
 
-  getAllResidents = async () => {};
+  getAllResidents = async () => {
+    const residents = await this.residentsServices.getAllResidents();
+    return {
+      status: 200,
+      data: residents,
+    };
+  };
 
-  getOneResident = async (id) => {};
+  getOneResident = async (id) => {
+    const resident = await this.residentsServices.getResidentById(id);
+    return {
+      status: 200,
+      data: resident,
+    };
+  };
 }
 
 export default ReadResidentUseCase;

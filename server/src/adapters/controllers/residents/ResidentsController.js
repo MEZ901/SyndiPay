@@ -12,11 +12,14 @@ class ResidentsController {
   }
 
   getAllResidents = async (req, res) => {
-    res.status(200).json({ message: "getAllResidents" });
+    const result = await this.readResidentUseCase.getAllResidents();
+    res.status(result.status).json(result.data);
   };
 
   getResidentById = async (req, res) => {
-    res.status(200).json({ message: "getResidentById" });
+    const { id } = req.params;
+    const result = await this.readResidentUseCase.getOneResident(id);
+    res.status(result.status).json(result.data);
   };
 
   createResident = async (req, res) => {
