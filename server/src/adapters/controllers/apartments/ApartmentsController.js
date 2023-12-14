@@ -36,7 +36,18 @@ class ApartmentsController {
   };
 
   updateApartment = async (req, res) => {
-    res.status(200).json({ message: "update apartment" });
+    const { id } = req.params;
+    const { apartmentNumber, currentResident, previousResident } = req.body;
+
+    const updateData = {
+      ...(apartmentNumber && { apartmentNumber }),
+      ...(currentResident !== undefined && { currentResident }),
+      ...(previousResident && { previousResident }),
+    };
+
+    const result = await this.updateApartmentUseCase.execute(id, updateData);
+
+    res.status(result.status).json(result.data);
   };
 
   deleteApartment = async (req, res) => {

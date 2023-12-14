@@ -54,6 +54,14 @@ class ApartmentsServices {
     const apartment = await this.apartmentRepository.findById(apartmentId);
     return apartment;
   };
+
+  updateApartment = async (apartmentId, data) => {
+    const updatedApartment = await this.apartmentRepository.update(
+      apartmentId,
+      data
+    );
+    return updatedApartment;
+  };
 }
 
 export default ApartmentsServices;
