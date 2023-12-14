@@ -21,7 +21,7 @@ class ApartmentsController {
 
   createApartment = async (req, res) => {
     const { apartmentNumber, currentResident } = req.body;
-    const syndic = req.user._id;
+    const syndic = req.user.id;
 
     const result = await this.createApartmentUseCase.execute({
       apartmentNumber,
