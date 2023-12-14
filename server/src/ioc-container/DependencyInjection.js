@@ -96,11 +96,12 @@ class DependencyInjection {
       securityService,
       jsonWebToken,
     });
-    const apartmentsServices = new ApartmentsServices({
-      apartmentRepository,
-    });
     const residentsServices = new ResidentsServices({
       residentRepository,
+    });
+    const apartmentsServices = new ApartmentsServices({
+      apartmentRepository,
+      residentsServices,
     });
     const paymentsServices = new PaymentsServices({
       paymentRepository,

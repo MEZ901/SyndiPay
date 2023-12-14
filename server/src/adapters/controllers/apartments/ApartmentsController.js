@@ -12,11 +12,14 @@ class ApartmentsController {
   }
 
   getAllApartments = async (req, res) => {
-    res.status(200).json({ message: "get all apartments" });
+    const result = await this.readApartmentUseCase.getAllApartments();
+    res.status(result.status).json(result.data);
   };
 
   getApartmentById = async (req, res) => {
-    res.status(200).json({ message: "get apartment by id" });
+    const { id } = req.params;
+    const result = await this.readApartmentUseCase.getOneApartment(id);
+    res.status(result.status).json(result.data);
   };
 
   createApartment = async (req, res) => {

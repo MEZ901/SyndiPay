@@ -3,7 +3,10 @@ class ResidentsServices {
     this.residentRepository = residentRepository;
   }
 
-  getAllResidents = async () => {};
+  getResidentById = async (residentId) => {
+    const resident = await this.residentRepository.findById(residentId);
+    return resident;
+  };
 }
 
 export default ResidentsServices;

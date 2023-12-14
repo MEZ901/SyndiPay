@@ -3,15 +3,17 @@ import NotFoundError from "../../../infrastructure/exceptions/NotFoundError.js";
 import validateData from "../../../infrastructure/helpers/validateData.js";
 
 class ApartmentsServices {
-  constructor({ apartmentRepository }) {
+  constructor({ apartmentRepository, residentsServices }) {
     this.apartmentRepository = apartmentRepository;
+    this.residentsServices = residentsServices;
   }
 
   validateAddApartmentInputs = async (data) => {
     await Promise.all([
       validateData(data, "addApartment"),
       this.validateApartmentNumberUnique(data.apartmentNumber),
-      this.validateIfResidentExists(data.currentResident),
+      data.currentResident &&
+        this.validateIfResidentExists(data.currentResident),
     ]);
   };
 
@@ -19,7 +21,6 @@ class ApartmentsServices {
     await Promise.all([
       validateData(data, "updateApartment"),
       this.validateApartmentNumberUnique(data.apartmentNumber),
-      this.validateIfResidentExists(data.currentResident),
     ]);
   };
 
@@ -33,9 +34,7 @@ class ApartmentsServices {
   };
 
   validateIfResidentExists = async (residentId) => {
-    const resident = await this.apartmentRepository.findResidentById(
-      residentId
-    );
+    const resident = await this.residentsServices.getResidentById(residentId);
     if (!resident) {
       throw new NotFoundError("Resident does not exist");
     }
@@ -43,6 +42,16 @@ class ApartmentsServices {
 
   createApartment = async (data) => {
     const apartment = await this.apartmentRepository.create(data);
+    return apartment;
+  };
+
+  getAllApartments = async () => {
+    const apartments = await this.apartmentRepository.find();
+    return apartments;
+  };
+
+  getApartmentById = async (apartmentId) => {
+    const apartment = await this.apartmentRepository.findById(apartmentId);
     return apartment;
   };
 }
