@@ -1,8 +1,9 @@
 import { Router } from "express";
-import container from "../../../../ioc-container/Container.js";
+import Container from "../../../../ioc-container/Container.js";
 import asyncHandler from "../../interceptors/asyncHandler.js";
 
 const authRoutes = Router();
+const container = Container.getInstance();
 const authController = container.resolve("authController");
 
 authRoutes.post("/register", asyncHandler(authController.register));

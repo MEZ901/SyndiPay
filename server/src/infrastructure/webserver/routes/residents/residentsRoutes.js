@@ -1,8 +1,9 @@
 import { Router } from "express";
-import container from "../../../../ioc-container/Container.js";
+import Container from "../../../../ioc-container/Container.js";
 import asyncHandler from "../../interceptors/asyncHandler.js";
 
 const residentsRoutes = Router();
+const container = Container.getInstance();
 const residentsController = container.resolve("residentsController");
 
 residentsRoutes

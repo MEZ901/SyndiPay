@@ -1,6 +1,10 @@
 import fs from "fs";
 import path from "path";
-import container from "./Container.js";
+import Container from "./Container.js";
+
+// singleton ==========================================================================
+const container = Container.getInstance();
+// ====================================================================================
 
 // helpers ============================================================================
 import getCurrentDirname from "../infrastructure/helpers/getCurrentDirname.js";

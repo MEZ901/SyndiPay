@@ -1,8 +1,17 @@
 import NotFoundError from "../infrastructure/exceptions/NotFoundError.js";
 
 class Container {
+  static instance;
+
   constructor() {
     this.dependencies = {};
+  }
+
+  static getInstance() {
+    if (!Container.instance) {
+      Container.instance = new Container();
+    }
+    return Container.instance;
   }
 
   register(name, dependency) {
@@ -17,4 +26,4 @@ class Container {
   }
 }
 
-export default new Container();
+export default Container;

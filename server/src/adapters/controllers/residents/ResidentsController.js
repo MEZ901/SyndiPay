@@ -23,7 +23,18 @@ class ResidentsController {
   };
 
   createResident = async (req, res) => {
-    res.status(200).json({ message: "createResident" });
+    const { name, contactInfo, apartment, isOwner } = req.body;
+
+    const residentData = {
+      name,
+      ...(contactInfo && { contactInfo }),
+      ...(apartment && { apartment }),
+      ...(isOwner !== undefined && { isOwner }),
+    };
+
+    const result = await this.createResidentUseCase.execute(residentData);
+
+    res.status(result.status).json(result.data);
   };
 
   updateResident = async (req, res) => {
