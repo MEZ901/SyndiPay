@@ -23,12 +23,11 @@ class ResidentsController {
   };
 
   createResident = async (req, res) => {
-    const { name, contactInfo, apartment, isOwner } = req.body;
+    const { name, contactInfo, isOwner } = req.body;
 
     const residentData = {
       name,
       ...(contactInfo && { contactInfo }),
-      ...(apartment && { apartment }),
       ...(isOwner !== undefined && { isOwner }),
     };
 

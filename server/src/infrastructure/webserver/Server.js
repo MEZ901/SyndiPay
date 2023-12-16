@@ -4,6 +4,7 @@ import environment from "../config/environment.js";
 import errorHandler from "./interceptors/errorHandler.js";
 import DependencyInjection from "../../ioc-container/DependencyInjection.js";
 import logger from "../packages/pino/logger.js";
+import MongooseConnection from "../database/MongooseConnection.js";
 
 class Server {
   constructor() {
@@ -34,6 +35,10 @@ class Server {
     this.app.use(errorHandler);
   };
 
+  connectToDatabase = () => {
+    MongooseConnection.getInstance();
+  };
+
   start = async () => {
     this.app.listen(this.port, () => {
       logger.info(
@@ -45,6 +50,7 @@ class Server {
     this.configureMiddlewares();
     await this.setupRoutes();
     this.configureErrorHandling();
+    this.connectToDatabase();
   };
 }
 
