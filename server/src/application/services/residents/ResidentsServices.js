@@ -23,6 +23,13 @@ class ResidentsServices {
     ]);
   };
 
+  validateUpdateResidentInputs = async (resident) => {
+    await Promise.all([
+      validateData(resident, "updateResident"),
+      this.validateResidentNameUnique(resident.name),
+    ]);
+  };
+
   validateResidentNameUnique = async (name) => {
     const resident = await this.residentRepository.findByName(name);
     if (resident) {
@@ -33,6 +40,11 @@ class ResidentsServices {
   createResident = async (resident) => {
     const createdResident = await this.residentRepository.create(resident);
     return createdResident;
+  };
+
+  updateResident = async (id, resident) => {
+    const updatedResident = await this.residentRepository.update(id, resident);
+    return updatedResident;
   };
 }
 

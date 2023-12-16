@@ -3,7 +3,19 @@ class UpdateResidentUseCase {
     this.residentsServices = residentsServices;
   }
 
-  execute = async (resident) => {};
+  execute = async (id, resident) => {
+    await this.residentsServices.validateUpdateResidentInputs(resident);
+
+    const updatedResident = await this.residentsServices.updateResident(
+      id,
+      resident
+    );
+
+    return {
+      status: 200,
+      data: updatedResident,
+    };
+  };
 }
 
 export default UpdateResidentUseCase;
