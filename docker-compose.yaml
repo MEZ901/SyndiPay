@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  server:
+    container_name: syndipay_server
+    build:
+      context: ./server
+      dockerfile: ./docker/Dockerfile
+    image: syndipay_server:1.0.0
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    networks:
+      - syndipay_network
+
+  client:
+    container_name: syndipay_client
+    build:
+      context: ./client
+      dockerfile: ./docker/Dockerfile
+    image: syndipay_client:1.0.0
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - server
+    networks:
+      - syndipay_network
+
+networks:
+  syndipay_network:
+    driver: bridge
