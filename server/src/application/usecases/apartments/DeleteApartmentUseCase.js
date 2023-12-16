@@ -9,7 +9,7 @@ class DeleteApartmentUseCase {
     return {
       status: 200,
       data: {
-        message: `The apartment ${result.apartmentNumber} has been deleted successfully`,
+        message: `The apartment ${result.apartmentNumber} has been soft deleted successfully`,
       },
     };
   };

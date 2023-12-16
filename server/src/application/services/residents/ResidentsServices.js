@@ -46,6 +46,16 @@ class ResidentsServices {
     const updatedResident = await this.residentRepository.update(id, resident);
     return updatedResident;
   };
+
+  softDeleteResident = async (id) => {
+    const deletedResident = await this.residentRepository.softDelete(id);
+    return deletedResident;
+  };
+
+  forceDeleteResident = async (id) => {
+    const deletedResident = await this.residentRepository.forceDelete(id);
+    return deletedResident;
+  };
 }
 
 export default ResidentsServices;

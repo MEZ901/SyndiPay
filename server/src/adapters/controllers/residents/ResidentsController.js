@@ -52,11 +52,15 @@ class ResidentsController {
   };
 
   deleteResident = async (req, res) => {
-    res.status(200).json({ message: "deleteResident" });
+    const { id } = req.params;
+    const result = await this.deleteResidentUseCase.softDelete(id);
+    res.status(result.status).json(result.data);
   };
 
   forceDeleteResident = async (req, res) => {
-    res.status(200).json({ message: "forceDeleteResident" });
+    const { id } = req.params;
+    const result = await this.deleteResidentUseCase.forceDelete(id);
+    res.status(result.status).json(result.data);
   };
 }
 
