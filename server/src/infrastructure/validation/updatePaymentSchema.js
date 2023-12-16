@@ -5,8 +5,13 @@ const updatePaymentSchema = Joi.object({
   resident: Joi.string(),
   amount: Joi.number(),
   paymentDate: Joi.date(),
-  paymentMethod: Joi.string(),
-  paymentStatus: Joi.string(),
+  paymentDuration: Joi.string().valid(
+    "1 month",
+    "3 months",
+    "6 months",
+    "1 year"
+  ),
+  paymentMethod: Joi.string().valid("cash", "check", "bankTransfer"),
 }).min(1);
 
 export default updatePaymentSchema;

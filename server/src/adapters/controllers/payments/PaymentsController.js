@@ -12,27 +12,75 @@ class PaymentsController {
   }
 
   getAllPayments = async (req, res) => {
-    res.status(200).json({ message: "getAllPayments" });
+    const result = await this.readPaymentUseCase.getAllPayments();
+    res.status(result.status).json(result.data);
   };
 
   getPaymentById = async (req, res) => {
-    res.status(200).json({ message: "getPaymentById" });
+    const { id } = req.params;
+    const result = await this.readPaymentUseCase.getOnePayment(id);
+    res.status(result.status).json(result.data);
   };
 
   createPayment = async (req, res) => {
-    res.status(200).json({ message: "createPayment" });
+    const {
+      apartment,
+      resident,
+      amount,
+      paymentDate,
+      paymentDuration,
+      paymentMethod,
+    } = req.body;
+
+    const paymentData = {
+      apartment,
+      resident,
+      amount,
+      ...(paymentDate && { paymentDate }),
+      ...(paymentDuration && { paymentDuration }),
+      ...(paymentMethod && { paymentMethod }),
+    };
+
+    const result = await this.createPaymentUseCase.execute(paymentData);
+
+    res.status(result.status).json(result.data);
   };
 
   updatePayment = async (req, res) => {
-    res.status(200).json({ message: "updatePayment" });
+    const { id } = req.params;
+    const {
+      apartment,
+      resident,
+      amount,
+      paymentDate,
+      paymentDuration,
+      paymentMethod,
+    } = req.body;
+
+    const paymentData = {
+      ...(apartment && { apartment }),
+      ...(resident && { resident }),
+      ...(amount && { amount }),
+      ...(paymentDate && { paymentDate }),
+      ...(paymentDuration && { paymentDuration }),
+      ...(paymentMethod && { paymentMethod }),
+    };
+
+    const result = await this.updatePaymentUseCase.execute(id, paymentData);
+
+    res.status(result.status).json(result.data);
   };
 
   deletePayment = async (req, res) => {
-    res.status(200).json({ message: "deletePayment" });
+    const { id } = req.params;
+    const result = await this.deletePaymentUseCase.softDelete(id);
+    res.status(result.status).json(result.data);
   };
 
   forceDeletePayment = async (req, res) => {
-    res.status(200).json({ message: "forceDeletePayment" });
+    const { id } = req.params;
+    const result = await this.deletePaymentUseCase.forceDelete(id);
+    res.status(result.status).json(result.data);
   };
 }
 

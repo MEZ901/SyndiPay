@@ -26,7 +26,7 @@ class RefreshTokenUseCase {
         accessToken,
       },
       data: {
-        message: "Refresh token successfully",
+        message: "Access token has been refreshed successfully!",
       },
     };
   };

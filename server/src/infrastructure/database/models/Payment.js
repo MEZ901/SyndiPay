@@ -18,16 +18,17 @@ const paymentSchema = new Schema(
     },
     paymentDate: {
       type: Date,
-      default: null,
+      default: Date.now,
+    },
+    paymentDuration: {
+      type: String,
+      enum: ["1 month", "3 months", "6 months", "1 year"],
+      default: "1 month",
     },
     paymentMethod: {
       type: String,
       enum: ["cash", "check", "bankTransfer"],
-    },
-    paymentStatus: {
-      type: String,
-      enum: ["paid", "unpaid"],
-      default: "unpaid",
+      default: "cash",
     },
     createdAt: {
       type: Date,
