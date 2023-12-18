@@ -2,25 +2,26 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext } from "./context/ColorModeContext";
 import { Routes, Route } from "react-router-dom";
 import useMode from "./hooks/useMode";
-import Topbar from "./components/Topbar";
-import Sidebar from "./components/Sidebar";
 import Dashboard from "./features/dashboard/pages/Dashboard";
 import Apartments from "./features/apartments/pages/Apartments";
 import Residents from "./features/residents/pages/Residents";
 import Payments from "./features/payments/pages/Payments";
 import Calendar from "./features/calendar/pages/Calendar";
+import SignIn from "./features/auth/pages/SignIn";
+import AdminLayout from "./layouts/AdminLayout";
+import GuestLayout from "./layouts/GuestLayout";
+import SignUp from "./features/auth/pages/SignUp";
 
 const App = () => {
   const [theme, colorMode] = useMode();
+  const user = null;
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <div className="app">
-          <Sidebar />
-          <main className="content">
-            <Topbar />
-            <Routes>
+        <Routes>
+          {user ? (
+            <Route path="/" element={<AdminLayout />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/apartments" element={<Apartments />} />
               <Route path="/residents" element={<Residents />} />
@@ -31,10 +32,15 @@ const App = () => {
               <Route path="/pie" element={<h1>Pie</h1>} />
               <Route path="/line" element={<h1>Line</h1>} />
               <Route path="/faq" element={<h1>FAQ</h1>} />
-              <Route path="*" element={<h1>Not Found</h1>} />
-            </Routes>
-          </main>
-        </div>
+            </Route>
+          ) : (
+            <Route path="/" element={<GuestLayout />}>
+              <Route path="/" element={<SignIn />} />
+              <Route path="/signup" element={<SignUp />} />
+            </Route>
+          )}
+          <Route path="*" element={<h1>Not Found</h1>} />
+        </Routes>
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
