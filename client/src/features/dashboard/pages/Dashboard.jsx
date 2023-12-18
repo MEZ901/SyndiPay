@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../../theme";
 import { mockTransactions } from "../../../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
@@ -19,24 +19,14 @@ const Dashboard = () => {
   return (
     <Box m="20px">
       {/* HEADER */}
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
-
-        <Box>
-          <Button
-            sx={{
-              backgroundColor: colors.blueAccent[700],
-              color: colors.grey[100],
-              fontSize: "14px",
-              fontWeight: "bold",
-              padding: "10px 20px",
-            }}
-          >
-            <DownloadOutlinedIcon sx={{ mr: "10px" }} />
-            Download Reports
-          </Button>
-        </Box>
-      </Box>
+      <Header
+        title="DASHBOARD"
+        subtitle="Welcome to your dashboard"
+        buttonElement={{
+          icon: <DownloadOutlinedIcon sx={{ mr: "10px" }} />,
+          text: "Download Reports",
+        }}
+      />
 
       {/* GRID & CHARTS */}
       <Box
@@ -166,9 +156,10 @@ const Dashboard = () => {
         </Box>
         <Box
           gridColumn="span 4"
-          gridRow="span 2"
+          gridRow="span 4"
           backgroundColor={colors.primary[400]}
           overflow="auto"
+          sx={{ mb: "20px" }}
         >
           <Box
             display="flex"
@@ -221,6 +212,7 @@ const Dashboard = () => {
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
           p="30px"
+          sx={{ mb: "20px" }}
         >
           <Typography variant="h5" fontWeight="600">
             Campaign
@@ -246,6 +238,7 @@ const Dashboard = () => {
           gridColumn="span 4"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
+          sx={{ mb: "20px" }}
         >
           <Typography
             variant="h5"
