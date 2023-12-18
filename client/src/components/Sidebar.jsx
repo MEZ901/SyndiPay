@@ -21,7 +21,12 @@ const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [selected, setSelected] = useState("Dashboard");
+
+  const url = window.location.pathname;
+  const endpoint = url.substring(url.lastIndexOf("/") + 1);
+  const currentPageName = endpoint.charAt(0).toUpperCase() + endpoint.slice(1);
+
+  const [selected, setSelected] = useState(currentPageName || "Dashboard");
 
   const handleToggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -131,8 +136,8 @@ const Sidebar = () => {
   const renderPagesSection = () => {
     const items = [
       {
-        title: "Profile Form",
-        to: "/form",
+        title: "Profile",
+        to: "/profile",
         icon: <PersonOutlinedIcon />,
       },
       {
