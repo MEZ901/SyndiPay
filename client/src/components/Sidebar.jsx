@@ -4,7 +4,7 @@ import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
@@ -13,7 +13,6 @@ import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import SidebarItem from "./SidebarItem";
 import user from "../assets/images/user.png";
 import "react-pro-sidebar/dist/css/styles.css";
@@ -89,6 +88,23 @@ const Sidebar = () => {
   };
 
   const renderDataSection = () => {
+    const items = [
+      {
+        title: "Apartments",
+        to: "/apartments",
+        icon: <HomeOutlinedIcon />,
+      },
+      {
+        title: "Residents",
+        to: "/residents",
+        icon: <PeopleOutlinedIcon />,
+      },
+      {
+        title: "Payments",
+        to: "/payments",
+        icon: <ReceiptOutlinedIcon />,
+      },
+    ];
     return (
       <>
         <Typography
@@ -98,32 +114,38 @@ const Sidebar = () => {
         >
           Data
         </Typography>
-        <SidebarItem
-          title="Manage Team"
-          to="/team"
-          icon={<PeopleOutlinedIcon />}
-          selected={selected}
-          setSelected={setSelected}
-        />
-        <SidebarItem
-          title="Contacts Information"
-          to="/contacts"
-          icon={<ContactsOutlinedIcon />}
-          selected={selected}
-          setSelected={setSelected}
-        />
-        <SidebarItem
-          title="Invoices Balances"
-          to="/invoices"
-          icon={<ReceiptOutlinedIcon />}
-          selected={selected}
-          setSelected={setSelected}
-        />
+        {items.map((item) => (
+          <SidebarItem
+            key={item.title}
+            title={item.title}
+            to={item.to}
+            icon={item.icon}
+            selected={selected}
+            setSelected={setSelected}
+          />
+        ))}
       </>
     );
   };
 
   const renderPagesSection = () => {
+    const items = [
+      {
+        title: "Profile Form",
+        to: "/form",
+        icon: <PersonOutlinedIcon />,
+      },
+      {
+        title: "Calendar",
+        to: "/calendar",
+        icon: <CalendarTodayOutlinedIcon />,
+      },
+      {
+        title: "FAQ Page",
+        to: "/faq",
+        icon: <HelpOutlineOutlinedIcon />,
+      },
+    ];
     return (
       <>
         <Typography
@@ -133,32 +155,38 @@ const Sidebar = () => {
         >
           Pages
         </Typography>
-        <SidebarItem
-          title="Profile Form"
-          to="/form"
-          icon={<PersonOutlinedIcon />}
-          selected={selected}
-          setSelected={setSelected}
-        />
-        <SidebarItem
-          title="Calendar"
-          to="/calendar"
-          icon={<CalendarTodayOutlinedIcon />}
-          selected={selected}
-          setSelected={setSelected}
-        />
-        <SidebarItem
-          title="FAQ Page"
-          to="/faq"
-          icon={<HelpOutlineOutlinedIcon />}
-          selected={selected}
-          setSelected={setSelected}
-        />
+        {items.map((item) => (
+          <SidebarItem
+            key={item.title}
+            title={item.title}
+            to={item.to}
+            icon={item.icon}
+            selected={selected}
+            setSelected={setSelected}
+          />
+        ))}
       </>
     );
   };
 
   const renderChartsSection = () => {
+    const items = [
+      {
+        title: "Bar Chart",
+        to: "/bar",
+        icon: <BarChartOutlinedIcon />,
+      },
+      {
+        title: "Pie Chart",
+        to: "/pie",
+        icon: <PieChartOutlineOutlinedIcon />,
+      },
+      {
+        title: "Line Chart",
+        to: "/line",
+        icon: <TimelineOutlinedIcon />,
+      },
+    ];
     return (
       <>
         <Typography
@@ -168,34 +196,16 @@ const Sidebar = () => {
         >
           Charts
         </Typography>
-        <SidebarItem
-          title="Bar Chart"
-          to="/bar"
-          icon={<BarChartOutlinedIcon />}
-          selected={selected}
-          setSelected={setSelected}
-        />
-        <SidebarItem
-          title="Pie Chart"
-          to="/pie"
-          icon={<PieChartOutlineOutlinedIcon />}
-          selected={selected}
-          setSelected={setSelected}
-        />
-        <SidebarItem
-          title="Line Chart"
-          to="/line"
-          icon={<TimelineOutlinedIcon />}
-          selected={selected}
-          setSelected={setSelected}
-        />
-        <SidebarItem
-          title="Geography Chart"
-          to="/geography"
-          icon={<MapOutlinedIcon />}
-          selected={selected}
-          setSelected={setSelected}
-        />
+        {items.map((item) => (
+          <SidebarItem
+            key={item.title}
+            title={item.title}
+            to={item.to}
+            icon={item.icon}
+            selected={selected}
+            setSelected={setSelected}
+          />
+        ))}
       </>
     );
   };
@@ -228,7 +238,7 @@ const Sidebar = () => {
             <SidebarItem
               title="Dashboard"
               to="/"
-              icon={<HomeOutlinedIcon />}
+              icon={<DashboardIcon />}
               selected={selected}
               setSelected={setSelected}
             />

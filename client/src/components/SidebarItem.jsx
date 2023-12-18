@@ -26,7 +26,7 @@ SidebarItem.propTypes = {
   title: PropTypes.string.isRequired,
   to: PropTypes.string.isRequired,
   icon: PropTypes.node.isRequired,
-  selected: PropTypes.bool.isRequired,
+  selected: PropTypes.string.isRequired,
   setSelected: PropTypes.func.isRequired,
 };
 
