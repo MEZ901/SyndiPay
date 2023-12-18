@@ -35,8 +35,8 @@ const Apartments = () => {
     <Box m="20px">
       {/* HEADER */}
       <Header
-        title="DASHBOARD"
-        subtitle="Welcome to your dashboard"
+        title="APARTMENTS"
+        subtitle="Manage your apartments here."
         buttonElement={{
           icon: <AddCircleIcon sx={{ mr: "10px" }} />,
           text: "Add Apartment",

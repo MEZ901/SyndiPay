@@ -2,14 +2,16 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import { mockDataTeam } from "../../../data/mockData";
-import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Header from "../../../components/Header";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import IconButton from "@mui/material/IconButton";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const Residents = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
   const columns = [
     { field: "id", headerName: "ID" },
     {
@@ -19,47 +21,53 @@ const Residents = () => {
       cellClassName: "name-column--cell",
     },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-    },
-    {
-      field: "phone",
-      headerName: "Phone Number",
+      field: "contactInfo",
+      headerName: "Contact Info",
       flex: 1,
     },
     {
-      field: "email",
-      headerName: "Email",
+      field: "apartmentNumber",
+      headerName: "Apartment Number",
       flex: 1,
     },
     {
-      field: "accessLevel",
-      headerName: "Access Level",
+      field: "status",
+      headerName: "Status",
       flex: 1,
-      renderCell: ({ row: { access } }) => {
+      renderCell: (params) => {
+        return (
+          <Typography
+            sx={{
+              color:
+                params.value === "currently resides"
+                  ? colors.greenAccent[300]
+                  : colors.redAccent[300],
+            }}
+          >
+            {params.value}
+          </Typography>
+        );
+      },
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      renderCell: () => {
         return (
           <Box
-            width="60%"
-            m="0 auto"
-            p="5px"
-            display="flex"
-            justifyContent="center"
-            backgroundColor={
-              access === "admin"
-                ? colors.greenAccent[600]
-                : colors.greenAccent[700]
-            }
-            borderRadius="4px"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-evenly",
+            }}
           >
-            {access === "admin" && <AdminPanelSettingsOutlinedIcon />}
-            {access === "manager" && <SecurityOutlinedIcon />}
-            {access === "user" && <LockOpenOutlinedIcon />}
-            <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-              {access}
-            </Typography>
+            <IconButton aria-label="Edit">
+              <ModeEditIcon />
+            </IconButton>
+            <IconButton aria-label="Edit">
+              <DeleteIcon />
+            </IconButton>
           </Box>
         );
       },
@@ -68,7 +76,14 @@ const Residents = () => {
 
   return (
     <Box m="20px">
-      <Header title="TEAM" subtitle="Managing the Team Members" />
+      <Header
+        title="RESIDENTS"
+        subtitle="Managing the Team Members"
+        buttonElement={{
+          icon: <AddCircleIcon sx={{ mr: "10px" }} />,
+          text: "Add Resident",
+        }}
+      />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -98,7 +113,7 @@ const Residents = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+        <DataGrid rows={mockDataTeam} columns={columns} />
       </Box>
     </Box>
   );
