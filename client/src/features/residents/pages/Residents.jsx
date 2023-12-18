@@ -78,7 +78,7 @@ const Residents = () => {
     <Box m="20px">
       <Header
         title="RESIDENTS"
-        subtitle="Managing the Team Members"
+        subtitle="Manage your residents here"
         buttonElement={{
           icon: <AddCircleIcon sx={{ mr: "10px" }} />,
           text: "Add Resident",

@@ -1,48 +1,64 @@
-import { Box, useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
+import { mockDataInvoices } from "../../../data/mockData";
 import Header from "../../../components/Header";
-import ApartmentCard from "../components/ApartmentCard";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
-const Apartments = () => {
+const Payments = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const apartments = [
+  const columns = [
+    { field: "id", headerName: "ID" },
     {
-      id: 1,
-      apartmentNumber: "L101",
+      field: "apartment",
+      headerName: "Apartment",
+      flex: 1,
+      cellClassName: "name-column--cell",
     },
     {
-      id: 2,
-      apartmentNumber: "L102",
+      field: "resident",
+      headerName: "Resident",
+      flex: 1,
     },
     {
-      id: 3,
-      apartmentNumber: "L103",
+      field: "amount",
+      headerName: "Amount",
+      flex: 1,
+      renderCell: (params) => (
+        <Typography color={colors.greenAccent[500]}>
+          ${params.row.amount}
+        </Typography>
+      ),
     },
     {
-      id: 4,
-      apartmentNumber: "L104",
+      field: "date",
+      headerName: "Date",
+      flex: 1,
     },
     {
-      id: 5,
-      apartmentNumber: "L105",
+      field: "paymentDuration",
+      headerName: "Payment Duration",
+      flex: 1,
+    },
+    {
+      field: "paymentMethod",
+      headerName: "Payment Method",
+      flex: 1,
     },
   ];
 
   return (
     <Box m="20px">
-      {/* HEADER */}
       <Header
-        title="APARTMENTS"
-        subtitle="Manage your apartments here"
+        title="PAYMENTS"
+        subtitle="Manage your payments here"
         buttonElement={{
           icon: <AddCircleIcon sx={{ mr: "10px" }} />,
           text: "Add Apartment",
         }}
       />
-
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -70,22 +86,12 @@ const Apartments = () => {
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
           },
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: "1rem",
-          height: "100%",
         }}
       >
-        {apartments.map((apartment) => (
-          <ApartmentCard
-            key={apartment.id}
-            apartmentNumber={apartment.apartmentNumber}
-          />
-        ))}
+        <DataGrid rows={mockDataInvoices} columns={columns} />
       </Box>
     </Box>
   );
 };
 
-export default Apartments;
+export default Payments;
