@@ -29,7 +29,7 @@ class ApartmentsController {
     const result = await this.createApartmentUseCase.execute({
       apartmentNumber,
       syndic,
-      currentResident,
+      ...(currentResident && { currentResident }),
     });
 
     res.status(result.status).json(result.data);

@@ -24,7 +24,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
     if (refreshResult?.error) {
       console.log("Refresh token failed");
-      //   api.dispatch(logOut());
+      // TODO: logout user
       localStorage.removeItem("user");
     } else {
       console.log("Refresh token success");

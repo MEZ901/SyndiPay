@@ -1,5 +1,5 @@
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -8,29 +8,42 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useFormik } from "formik";
-import * as yup from "yup";
+import loginSchema from "../schemas/loginSchema";
+import { useDispatch } from "react-redux";
+import { useLoginMutation } from "../redux/authApiSlice";
+import { setCredentials } from "../redux/authSlice";
+import { encryptData } from "../../../utils/helpers";
+import { useState } from "react";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const SignIn = () => {
+  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
   const isNonMobile = useMediaQuery("(min-width:600px)");
-
-  const emailRule = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-  const loginSchema = yup.object().shape({
-    email: yup
-      .string()
-      .matches(emailRule, "Please enter a valid email")
-      .required("Email is required"),
-    password: yup.string().min(6).required("Password is required"),
-  });
+  const [login, { isLoading }] = useLoginMutation();
 
   const { values, errors, touched, handleChange, handleSubmit, handleBlur } =
     useFormik({
       initialValues: {
-        email: "",
+        emailOrUserName: "",
         password: "",
       },
       validationSchema: loginSchema,
-      onSubmit: async ({ email, password }) => {
-        console.log({ email, password });
+      onSubmit: async (data) => {
+        try {
+          const { user } = await login(data).unwrap();
+
+          dispatch(setCredentials({ ...user }));
+
+          const encryptedUser = encryptData(user);
+          localStorage.setItem("user", encryptedUser);
+        } catch (error) {
+          if (!error?.data) setError("No response");
+          else if (error?.status === 400) setError("Invalid credentials");
+          else if (error?.status === 404) setError("User not found");
+          else if (error?.status === 401) setError("Incorrect password");
+          else setError("Login failed");
+        }
       },
     });
 
@@ -60,17 +73,22 @@ const SignIn = () => {
               marginTop: 4,
             }}
           >
+            {error && (
+              <Alert severity="error" sx={{ gridColumn: "span 16" }}>
+                {error}
+              </Alert>
+            )}
             <TextField
               fullWidth
               variant="filled"
               type="text"
-              label="Email"
+              label="Email or username"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.email}
-              name="email"
-              error={!!touched.email && !!errors.email}
-              helperText={touched.email && errors.email}
+              value={values.emailOrUserName}
+              name="emailOrUserName"
+              error={!!touched.emailOrUserName && !!errors.emailOrUserName}
+              helperText={touched.emailOrUserName && errors.emailOrUserName}
               sx={{ gridColumn: "span 16" }}
             />
             <TextField
@@ -111,14 +129,15 @@ const SignIn = () => {
             mt="20px"
             sx={{ width: "100%" }}
           >
-            <Button
+            <LoadingButton
               type="submit"
               color="secondary"
               variant="contained"
               sx={{ width: "100%" }}
+              loading={isLoading}
             >
               Sign in
-            </Button>
+            </LoadingButton>
           </Box>
         </form>
       </Box>

@@ -1,6 +1,7 @@
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext } from "./context/ColorModeContext";
 import { Routes, Route } from "react-router-dom";
+import { useSelector } from "react-redux";
 import useMode from "./hooks/useMode";
 import Dashboard from "./features/dashboard/pages/Dashboard";
 import Apartments from "./features/apartments/pages/Apartments";
@@ -14,7 +15,7 @@ import SignUp from "./features/auth/pages/SignUp";
 
 const App = () => {
   const [theme, colorMode] = useMode();
-  const user = {};
+  const user = useSelector((state) => state.auth.user);
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>

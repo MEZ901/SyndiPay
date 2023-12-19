@@ -1,5 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import environment from "../config/environment.js";
 import errorHandler from "./interceptors/errorHandler.js";
 import DependencyInjection from "../../ioc-container/DependencyInjection.js";
@@ -35,6 +36,15 @@ class Server {
     this.app.use(errorHandler);
   };
 
+  configureCors = () => {
+    this.app.use(
+      cors({
+        origin: "http://localhost:3000",
+        credentials: true,
+      })
+    );
+  };
+
   connectToDatabase = () => {
     MongooseConnection.getInstance();
   };
@@ -48,6 +58,7 @@ class Server {
 
     DependencyInjection.setup();
     this.configureMiddlewares();
+    this.configureCors();
     await this.setupRoutes();
     this.configureErrorHandling();
     this.connectToDatabase();
