@@ -12,6 +12,8 @@ import Box from "@mui/material/Box";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useFormik } from "formik";
 import addApartmentSchema from "../schemas/addApartmentSchema";
+import { useGetAllResidentsQuery } from "../../residents/redux/residentApiSlice";
+import { useCreateApartmentMutation } from "../redux/apartmentApiSlice";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -22,20 +24,9 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const ApartmentModal = ({ open, handleClose, colors }) => {
-  const residents = [
-    { label: "The Shawshank Redemption" },
-    { label: "The Godfather" },
-    { label: "The Godfather: Part II" },
-    { label: "The Dark Knight" },
-    { label: "12 Angry Men" },
-    { label: "Schindler's List" },
-    { label: "Pulp Fiction" },
-    { label: "The Lord of the Rings: The Return of the King" },
-    { label: "The Good, the Bad and the Ugly" },
-    { label: "Fight Club" },
-    { label: "The Lord of the Rings: The Fellowship of the Ring" },
-  ];
+const ApartmentModal = ({ open, handleClose, colors, refetch }) => {
+  const { data: residentsData, isLoading } = useGetAllResidentsQuery();
+  const [createApartment] = useCreateApartmentMutation();
 
   const {
     values,
@@ -52,9 +43,16 @@ const ApartmentModal = ({ open, handleClose, colors }) => {
     },
     validationSchema: addApartmentSchema,
     onSubmit: async (data) => {
-      console.log(data);
+      try {
+        await createApartment(data);
+        await refetch();
+        handleClose();
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
+
   return (
     <BootstrapDialog
       onClose={handleClose}
@@ -87,41 +85,55 @@ const ApartmentModal = ({ open, handleClose, colors }) => {
               marginTop: 4,
             }}
           >
-            <TextField
-              fullWidth
-              variant="filled"
-              type="text"
-              label="Apartment Number"
-              name="apartmentNumber"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.apartmentNumber}
-              error={!!touched.apartmentNumber && !!errors.apartmentNumber}
-              helperText={touched.apartmentNumber && errors.apartmentNumber}
-              sx={{ gridColumn: "span 16" }}
-            />
-            <Autocomplete
-              disablePortal
-              id="combo-box-demo"
-              options={residents}
-              onChange={(event, value) =>
-                setValues({ ...values, currentResident: value?.label || null })
-              }
-              isOptionEqualToValue={(option, value) =>
-                option.label === value.label
-              }
-              renderInput={(params) => (
+            {isLoading ? (
+              <div>Loading...</div>
+            ) : (
+              <>
                 <TextField
-                  {...params}
-                  label="Resident"
+                  fullWidth
                   variant="filled"
-                  name="currentResident"
-                  error={!!touched.currentResident && !!errors.currentResident}
-                  helperText={touched.currentResident && errors.currentResident}
+                  type="text"
+                  label="Apartment Number"
+                  name="apartmentNumber"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.apartmentNumber}
+                  error={!!touched.apartmentNumber && !!errors.apartmentNumber}
+                  helperText={touched.apartmentNumber && errors.apartmentNumber}
+                  sx={{ gridColumn: "span 16" }}
                 />
-              )}
-              sx={{ gridColumn: "span 16" }}
-            />
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  options={residentsData}
+                  getOptionLabel={(option) => option.name}
+                  onChange={(event, value) =>
+                    setValues({
+                      ...values,
+                      currentResident: value?._id || null,
+                    })
+                  }
+                  isOptionEqualToValue={(option, value) =>
+                    option.name === value.name
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Resident"
+                      variant="filled"
+                      name="currentResident"
+                      error={
+                        !!touched.currentResident && !!errors.currentResident
+                      }
+                      helperText={
+                        touched.currentResident && errors.currentResident
+                      }
+                    />
+                  )}
+                  sx={{ gridColumn: "span 16" }}
+                />
+              </>
+            )}
           </Box>
         </DialogContent>
         <DialogActions>
@@ -148,6 +160,7 @@ ApartmentModal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   colors: PropTypes.object.isRequired,
+  refetch: PropTypes.func.isRequired,
 };
 
 export default ApartmentModal;

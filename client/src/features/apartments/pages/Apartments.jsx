@@ -5,12 +5,14 @@ import ApartmentCard from "../components/ApartmentCard";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ApartmentModal from "../components/ApartmentModal";
 import { useState } from "react";
+import { useGetAllApartmentsQuery } from "../redux/apartmentApiSlice";
 
 const Apartments = () => {
+  const [openModal, setOpenModal] = useState(false);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [openModal, setOpenModal] = useState(false);
+  const { data, error, isLoading, refetch } = useGetAllApartmentsQuery();
 
   const handleClickOpenModal = () => {
     setOpenModal(true);
@@ -19,28 +21,9 @@ const Apartments = () => {
     setOpenModal(false);
   };
 
-  const apartments = [
-    {
-      id: 1,
-      apartmentNumber: "L101",
-    },
-    {
-      id: 2,
-      apartmentNumber: "L102",
-    },
-    {
-      id: 3,
-      apartmentNumber: "L103",
-    },
-    {
-      id: 4,
-      apartmentNumber: "L104",
-    },
-    {
-      id: 5,
-      apartmentNumber: "L105",
-    },
-  ];
+  if (isLoading) return <div>Loading...</div>;
+
+  if (error) return <div>{error}</div>;
 
   return (
     <Box m="20px">
@@ -59,6 +42,7 @@ const Apartments = () => {
         open={openModal}
         handleClose={handleCloseModal}
         colors={colors}
+        refetch={refetch}
       />
 
       <Box
@@ -95,9 +79,9 @@ const Apartments = () => {
           height: "100%",
         }}
       >
-        {apartments.map((apartment) => (
+        {data.map((apartment) => (
           <ApartmentCard
-            key={apartment.id}
+            key={apartment._id}
             apartmentNumber={apartment.apartmentNumber}
           />
         ))}
