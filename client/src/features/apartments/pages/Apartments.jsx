@@ -3,10 +3,21 @@ import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import ApartmentCard from "../components/ApartmentCard";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import ApartmentModal from "../components/ApartmentModal";
+import { useState } from "react";
 
 const Apartments = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleClickOpenModal = () => {
+    setOpenModal(true);
+  };
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
 
   const apartments = [
     {
@@ -40,7 +51,14 @@ const Apartments = () => {
         buttonElement={{
           icon: <AddCircleIcon sx={{ mr: "10px" }} />,
           text: "Add Apartment",
+          onClick: handleClickOpenModal,
         }}
+      />
+
+      <ApartmentModal
+        open={openModal}
+        handleClose={handleCloseModal}
+        colors={colors}
       />
 
       <Box

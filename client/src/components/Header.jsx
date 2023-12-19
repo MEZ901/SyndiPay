@@ -36,6 +36,7 @@ const Header = ({ title, subtitle, buttonElement = null }) => {
               fontWeight: "bold",
               padding: "10px 20px",
             }}
+            onClick={buttonElement?.onClick}
           >
             {buttonElement.icon}
             {buttonElement.text}

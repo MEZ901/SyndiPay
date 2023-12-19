@@ -14,7 +14,7 @@ import SignUp from "./features/auth/pages/SignUp";
 
 const App = () => {
   const [theme, colorMode] = useMode();
-  const user = null;
+  const user = {};
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>

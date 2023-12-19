@@ -7,10 +7,21 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import IconButton from "@mui/material/IconButton";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useState } from "react";
+import ResidentModal from "../components/ResidentModal";
 
 const Residents = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleClickOpenModal = () => {
+    setOpenModal(true);
+  };
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
 
   const columns = [
     { field: "id", headerName: "ID" },
@@ -82,8 +93,16 @@ const Residents = () => {
         buttonElement={{
           icon: <AddCircleIcon sx={{ mr: "10px" }} />,
           text: "Add Resident",
+          onClick: handleClickOpenModal,
         }}
       />
+
+      <ResidentModal
+        open={openModal}
+        handleClose={handleCloseModal}
+        colors={colors}
+      />
+
       <Box
         m="40px 0 0 0"
         height="75vh"
