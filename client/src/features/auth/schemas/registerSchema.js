@@ -2,7 +2,7 @@ import * as yup from "yup";
 
 const emailRule = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 const registerSchema = yup.object().shape({
-  username: yup.string().required("Username is required"),
+  userName: yup.string().required("Username is required"),
   email: yup
     .string()
     .matches(emailRule, "Please enter a valid email")

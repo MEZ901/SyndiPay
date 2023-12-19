@@ -1,7 +1,6 @@
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
@@ -9,21 +8,43 @@ import Container from "@mui/material/Container";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useFormik } from "formik";
 import registerSchema from "../schemas/registerSchema";
+import { useRegisterMutation } from "../redux/authApiSlice";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../redux/authSlice";
+import { encryptData } from "../../../utils/helpers";
+import Alert from "@mui/material/Alert";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const SignUp = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const [register, { isLoading }] = useRegisterMutation();
+  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { values, errors, touched, handleChange, handleSubmit, handleBlur } =
     useFormik({
       initialValues: {
-        username: "",
+        userName: "",
         email: "",
         password: "",
         confirmPassword: "",
       },
       validationSchema: registerSchema,
       onSubmit: async (data) => {
-        console.log(data);
+        try {
+          const { user } = await register(data).unwrap();
+
+          dispatch(setCredentials({ ...user }));
+
+          const encryptedUser = encryptData(user);
+          localStorage.setItem("user", encryptedUser);
+
+          navigate("/");
+        } catch (error) {
+          setError(error?.data?.message || "register failed");
+        }
       },
     });
 
@@ -53,6 +74,11 @@ const SignUp = () => {
               marginTop: 4,
             }}
           >
+            {error && (
+              <Alert severity="error" sx={{ gridColumn: "span 16" }}>
+                {error}
+              </Alert>
+            )}
             <TextField
               fullWidth
               variant="filled"
@@ -60,10 +86,10 @@ const SignUp = () => {
               label="Username"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.username}
-              name="username"
-              error={!!touched.username && !!errors.username}
-              helperText={touched.username && errors.username}
+              value={values.userName}
+              name="userName"
+              error={!!touched.userName && !!errors.userName}
+              helperText={touched.userName && errors.userName}
               sx={{ gridColumn: "span 16" }}
             />
             <TextField
@@ -125,14 +151,15 @@ const SignUp = () => {
             mt="20px"
             sx={{ width: "100%" }}
           >
-            <Button
+            <LoadingButton
               type="submit"
               color="secondary"
               variant="contained"
               sx={{ width: "100%" }}
+              loading={isLoading}
             >
               Sign up
-            </Button>
+            </LoadingButton>
           </Box>
         </Box>
       </form>

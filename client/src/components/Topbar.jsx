@@ -14,9 +14,11 @@ import Menu from "@mui/material/Menu";
 import { useLogoutMutation } from "../features/auth/redux/authApiSlice";
 import { useDispatch } from "react-redux";
 import { logOut } from "../features/auth/redux/authSlice";
+import { useNavigate } from "react-router";
 
 const Topbar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
@@ -36,6 +38,7 @@ const Topbar = () => {
       await logout().unwrap();
       dispatch(logOut());
       localStorage.removeItem("user");
+      navigate("/");
     } catch (error) {
       console.log(error);
     }

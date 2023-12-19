@@ -38,11 +38,7 @@ const SignIn = () => {
           const encryptedUser = encryptData(user);
           localStorage.setItem("user", encryptedUser);
         } catch (error) {
-          if (!error?.data) setError("No response");
-          else if (error?.status === 400) setError("Invalid credentials");
-          else if (error?.status === 404) setError("User not found");
-          else if (error?.status === 401) setError("Incorrect password");
-          else setError("Login failed");
+          setError(error?.data?.message || "Login failed");
         }
       },
     });
