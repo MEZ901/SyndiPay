@@ -11,6 +11,8 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import { useFormik } from "formik";
+import addResidentSchema from "../schemas/AddResidentSchema";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -22,90 +24,113 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const ResidentModal = ({ open, handleClose, colors }) => {
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    handleBlur,
+    setValues,
+  } = useFormik({
+    initialValues: {
+      name: "",
+      contactInfo: "",
+      isOwner: false,
+    },
+    validationSchema: addResidentSchema,
+    onSubmit: async (data) => {
+      console.log(data);
+    },
+  });
   return (
     <BootstrapDialog
       onClose={handleClose}
       aria-labelledby="customized-dialog-title"
       open={open}
     >
-      <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-        Add Resident
-      </DialogTitle>
-      <IconButton
-        aria-label="close"
-        onClick={handleClose}
-        sx={{
-          position: "absolute",
-          right: 8,
-          top: 8,
-          color: (theme) => theme.palette.grey[500],
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
-      <DialogContent dividers>
-        <Box
-          display="grid"
-          gap="30px"
-          gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-          sx={{
-            "& > div": "span 4",
-            marginTop: 4,
-          }}
-        >
-          <TextField
-            fullWidth
-            variant="filled"
-            type="text"
-            label="Name"
-            //   onBlur={handleBlur}
-            //   onChange={handleChange}
-            //   value={values.name}
-            name="name"
-            // error={!!touched.name && !!errors.name}
-            // helperText={touched.name && errors.name}
-            sx={{ gridColumn: "span 16" }}
-          />
-          <TextField
-            fullWidth
-            variant="filled"
-            type="text"
-            label="Contact Info"
-            // onBlur={handleBlur}
-            // onChange={handleChange}
-            // value={values.contactInfo}
-            name="contactInfo"
-            // error={!!touched.contactInfo && !!errors.contactInfo}
-            // helperText={touched.contactInfo && errors.contactInfo}
-            sx={{ gridColumn: "span 16" }}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-              // checked={ownsApartment}
-              // onChange={handleCheckboxChange}
-              />
-            }
-            label="This resident owns the apartment"
-            sx={{ gridColumn: "span 16" }}
-          />
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          autoFocus
+      <form onSubmit={handleSubmit}>
+        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+          Add Resident
+        </DialogTitle>
+        <IconButton
+          aria-label="close"
           onClick={handleClose}
           sx={{
-            backgroundColor: colors.blueAccent[700],
-            color: colors.grey[100],
-            fontSize: "14px",
-            fontWeight: "bold",
-            padding: "10px 20px",
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
           }}
         >
-          create
-        </Button>
-      </DialogActions>
+          <CloseIcon />
+        </IconButton>
+        <DialogContent dividers>
+          <Box
+            display="grid"
+            gap="30px"
+            gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+            sx={{
+              "& > div": "span 4",
+              marginTop: 4,
+            }}
+          >
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="Name"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.name}
+              name="name"
+              error={!!touched.name && !!errors.name}
+              helperText={touched.name && errors.name}
+              sx={{ gridColumn: "span 16" }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="Contact Info"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.contactInfo}
+              name="contactInfo"
+              error={!!touched.contactInfo && !!errors.contactInfo}
+              helperText={touched.contactInfo && errors.contactInfo}
+              sx={{ gridColumn: "span 16" }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={values.isOwner}
+                  onChange={(e) =>
+                    setValues({ ...values, isOwner: e.target.checked })
+                  }
+                />
+              }
+              label="This resident owns the apartment"
+              sx={{ gridColumn: "span 16" }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            autoFocus
+            type="submit"
+            sx={{
+              backgroundColor: colors.blueAccent[700],
+              color: colors.grey[100],
+              fontSize: "14px",
+              fontWeight: "bold",
+              padding: "10px 20px",
+            }}
+          >
+            create
+          </Button>
+        </DialogActions>
+      </form>
     </BootstrapDialog>
   );
 };
