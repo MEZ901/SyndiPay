@@ -1,18 +1,30 @@
 import BaseRepository from "./BaseRepository.js";
 
 class UserRepository extends BaseRepository {
-  async findByEmail(email) {
-    return this.model.findOne({ email });
+  async findByEmail(email, includeDeleted = false) {
+    const query = includeDeleted ? { email } : { email, isDeleted: false };
+    return this.model.findOne(query);
   }
 
-  async findByUserName(userName) {
-    return this.model.findOne({ userName });
+  async findByUserName(userName, includeDeleted = false) {
+    const query = includeDeleted
+      ? { userName }
+      : { userName, isDeleted: false };
+
+    return this.model.findOne(query);
   }
 
-  async findByEmailOrUserName(emailOrUserName) {
-    return this.model.findOne({
-      $or: [{ email: emailOrUserName }, { userName: emailOrUserName }],
-    });
+  async findByEmailOrUserName(emailOrUserName, includeDeleted = false) {
+    const query = includeDeleted
+      ? {
+          $or: [{ email: emailOrUserName }, { userName: emailOrUserName }],
+        }
+      : {
+          $or: [{ email: emailOrUserName }, { userName: emailOrUserName }],
+          isDeleted: false,
+        };
+
+    return this.model.findOne(query);
   }
 }
 

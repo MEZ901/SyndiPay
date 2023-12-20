@@ -4,7 +4,6 @@ const residentSchema = new Schema(
   {
     name: {
       type: String,
-      unique: true,
       required: true,
     },
     contactInfo: {
@@ -33,7 +32,7 @@ const residentSchema = new Schema(
   }
 );
 
-residentSchema.pre("save", function (next) {
+residentSchema.pre("save", async function (next) {
   this.updatedAt = Date.now();
   next();
 });
