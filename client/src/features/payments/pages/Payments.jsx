@@ -8,10 +8,13 @@ import PaymentModal from "../components/PaymentModal";
 import IconButton from "@mui/material/IconButton";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import {
   useGetAllPaymentsQuery,
   useDeletePaymentMutation,
 } from "../redux/paymentApiSlice";
+import PaymentDocument from "../components/PaymentDocument";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 const Payments = () => {
   const theme = useTheme();
@@ -33,7 +36,6 @@ const Payments = () => {
   };
 
   const handleDeletePayment = async (id) => {
-    console.log(id);
     await deletePayment(id);
     refetch();
   };
@@ -116,6 +118,20 @@ const Payments = () => {
               onClick={() => handleDeletePayment(e.row.id)}
             >
               <DeleteIcon />
+            </IconButton>
+            <IconButton aria-label="Invoice">
+              <PDFDownloadLink
+                document={<PaymentDocument payment={e.row} />}
+                fileName={`payment-${e.row.id}.pdf`}
+                style={{
+                  textDecoration: "none",
+                  color: "inherit",
+                }}
+              >
+                {({ loading }) =>
+                  loading ? "Loading document..." : <ReceiptIcon />
+                }
+              </PDFDownloadLink>
             </IconButton>
           </Box>
         );

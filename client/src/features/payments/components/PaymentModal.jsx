@@ -105,9 +105,9 @@ const PaymentModal = ({ open, handleClose, colors, refetch, paymentData }) => {
   ];
 
   const paymentMethod = [
-    { label: "Cash" },
-    { label: "Check" },
-    { label: "Bank Transfer" },
+    { label: "cash" },
+    { label: "check" },
+    { label: "bankTransfer" },
   ];
   return (
     <BootstrapDialog
