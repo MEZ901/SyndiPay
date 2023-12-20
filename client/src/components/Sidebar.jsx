@@ -15,12 +15,14 @@ import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import SidebarItem from "./SidebarItem";
 import user from "../assets/images/user.png";
+import { useSelector } from "react-redux";
 import "react-pro-sidebar/dist/css/styles.css";
 
 const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const authenticatedUser = useSelector((state) => state.auth.user);
 
   const url = window.location.pathname;
   const endpoint = url.substring(url.lastIndexOf("/") + 1);
@@ -82,7 +84,7 @@ const Sidebar = () => {
             fontWeight="bold"
             sx={{ m: "10px 0 0 0" }}
           >
-            Issam
+            {authenticatedUser.userName}
           </Typography>
           <Typography variant="h5" color={colors.greenAccent[500]}>
             Syndic

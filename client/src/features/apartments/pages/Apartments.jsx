@@ -4,7 +4,7 @@ import Header from "../../../components/Header";
 import ApartmentCard from "../components/ApartmentCard";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ApartmentModal from "../components/ApartmentModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetAllApartmentsQuery } from "../redux/apartmentApiSlice";
 
 const Apartments = () => {
@@ -13,6 +13,10 @@ const Apartments = () => {
   const colors = tokens(theme.palette.mode);
 
   const { data, error, isLoading, refetch } = useGetAllApartmentsQuery();
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   const handleClickOpenModal = () => {
     setOpenModal(true);
@@ -23,7 +27,10 @@ const Apartments = () => {
 
   if (isLoading) return <div>Loading...</div>;
 
-  if (error) return <div>{error}</div>;
+  if (error) {
+    console.log(error);
+    return <div>waaa</div>;
+  }
 
   return (
     <Box m="20px">
@@ -83,6 +90,7 @@ const Apartments = () => {
           <ApartmentCard
             key={apartment._id}
             apartmentNumber={apartment.apartmentNumber}
+            apartment={apartment}
           />
         ))}
       </Box>

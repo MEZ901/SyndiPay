@@ -27,7 +27,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       console.log("Refresh token failed");
       api.dispatch(logOut());
       localStorage.removeItem("user");
-      // navigator.push("/");
     } else {
       console.log("Refresh token success");
       result = await baseQuery(args, api, extraOptions);
@@ -39,6 +38,5 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const apiSlice = createApi({
   baseQuery: baseQueryWithReauth,
-  // eslint-disable-next-line no-unused-vars
   endpoints: (builder) => ({}),
 });

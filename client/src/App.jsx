@@ -12,6 +12,7 @@ import SignIn from "./features/auth/pages/SignIn";
 import AdminLayout from "./layouts/AdminLayout";
 import GuestLayout from "./layouts/GuestLayout";
 import SignUp from "./features/auth/pages/SignUp";
+import SingleApartment from "./features/apartments/pages/SingleApartment";
 
 const App = () => {
   const [theme, colorMode] = useMode();
@@ -25,6 +26,7 @@ const App = () => {
             <Route path="/" element={<AdminLayout />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/apartments" element={<Apartments />} />
+              <Route path="/apartments/:id" element={<SingleApartment />} />
               <Route path="/residents" element={<Residents />} />
               <Route path="/payments" element={<Payments />} />
               <Route path="/profile" element={<h1>Profile</h1>} />
