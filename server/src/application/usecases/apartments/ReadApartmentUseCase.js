@@ -3,16 +3,19 @@ class ReadApartmentUseCase {
     this.apartmentsServices = apartmentsServices;
   }
 
-  getAllApartments = async () => {
-    const apartments = await this.apartmentsServices.getAllApartments();
+  getAllApartments = async (syndic) => {
+    const apartments = await this.apartmentsServices.getAllApartments(syndic);
     return {
       status: 200,
       data: apartments,
     };
   };
 
-  getOneApartment = async (id) => {
-    const apartment = await this.apartmentsServices.getApartmentById(id);
+  getOneApartment = async (id, syndic) => {
+    const apartment = await this.apartmentsServices.getApartmentById(
+      id,
+      syndic
+    );
     return {
       status: 200,
       data: apartment,

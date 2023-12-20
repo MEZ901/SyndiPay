@@ -13,7 +13,10 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { useFormik } from "formik";
 import addApartmentSchema from "../schemas/addApartmentSchema";
 import { useGetAllResidentsQuery } from "../../residents/redux/residentApiSlice";
-import { useCreateApartmentMutation } from "../redux/apartmentApiSlice";
+import {
+  useCreateApartmentMutation,
+  useUpdateApartmentMutation,
+} from "../redux/apartmentApiSlice";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -24,9 +27,16 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const ApartmentModal = ({ open, handleClose, colors, refetch }) => {
+const ApartmentModal = ({
+  open,
+  handleClose,
+  colors,
+  refetch,
+  apartmentData,
+}) => {
   const { data: residentsData, isLoading } = useGetAllResidentsQuery();
   const [createApartment] = useCreateApartmentMutation();
+  const [updateApartment] = useUpdateApartmentMutation();
 
   const {
     values,
@@ -36,16 +46,25 @@ const ApartmentModal = ({ open, handleClose, colors, refetch }) => {
     handleSubmit,
     handleBlur,
     setValues,
+    resetForm,
   } = useFormik({
     initialValues: {
-      apartmentNumber: "",
-      currentResident: null,
+      apartmentNumber: apartmentData?.apartmentNumber || "",
+      currentResident: apartmentData?.currentResident || null,
     },
     validationSchema: addApartmentSchema,
     onSubmit: async (data) => {
       try {
-        await createApartment(data);
+        if (apartmentData) {
+          await updateApartment({
+            id: apartmentData._id,
+            body: data,
+          });
+        } else {
+          await createApartment(data);
+        }
         await refetch();
+        resetForm();
         handleClose();
       } catch (error) {
         console.log(error);
@@ -61,7 +80,7 @@ const ApartmentModal = ({ open, handleClose, colors, refetch }) => {
     >
       <form onSubmit={handleSubmit}>
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Add Apartment
+          {apartmentData ? "Update Apartment" : "Add Apartment"}
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -113,6 +132,11 @@ const ApartmentModal = ({ open, handleClose, colors, refetch }) => {
                       currentResident: value?._id || null,
                     })
                   }
+                  value={
+                    residentsData?.find(
+                      (resident) => resident._id === values.currentResident
+                    ) || null
+                  }
                   isOptionEqualToValue={(option, value) =>
                     option.name === value.name
                   }
@@ -148,7 +172,7 @@ const ApartmentModal = ({ open, handleClose, colors, refetch }) => {
               padding: "10px 20px",
             }}
           >
-            create
+            {apartmentData ? "Update" : "Add"}
           </Button>
         </DialogActions>
       </form>
@@ -161,6 +185,7 @@ ApartmentModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   colors: PropTypes.object.isRequired,
   refetch: PropTypes.func.isRequired,
+  apartmentData: PropTypes.object,
 };
 
 export default ApartmentModal;

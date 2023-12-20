@@ -6,19 +6,29 @@ import {
   useGetApartmentByIdQuery,
   useDeleteApartmentMutation,
 } from "../redux/apartmentApiSlice";
+import { useState } from "react";
+import ApartmentModal from "../components/ApartmentModal";
 
 const SingleApartment = () => {
   const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState(false);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { id } = useParams();
 
-  const { data, isLoading } = useGetApartmentByIdQuery(id);
+  const { data, isLoading, refetch } = useGetApartmentByIdQuery(id);
   const [deleteApartment] = useDeleteApartmentMutation();
 
   const handleDeleteApartment = async () => {
     await deleteApartment(id);
     navigate("/apartments");
+  };
+
+  const handleClickOpenModal = () => {
+    setOpenModal(true);
+  };
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -29,6 +39,14 @@ const SingleApartment = () => {
       <Header
         title={data?.apartmentNumber}
         subtitle="Manage your apartment here"
+      />
+
+      <ApartmentModal
+        open={openModal}
+        handleClose={handleCloseModal}
+        colors={colors}
+        refetch={refetch}
+        apartmentData={data}
       />
 
       <Box
@@ -78,6 +96,17 @@ const SingleApartment = () => {
             }}
           >
             <h2>Current Resident</h2>
+            {data?.currentResident ? (
+              <div>
+                <h3>Name: {data?.currentResident?.name}</h3>
+                <h3>
+                  Contact Info: {data?.currentResident?.contactInfo || "---"}
+                </h3>
+                <h3>isOwner: {data?.currentResident?.isOwner || "false"}</h3>
+              </div>
+            ) : (
+              <div>No current resident</div>
+            )}
           </Box>
           <Box
             sx={{
@@ -90,6 +119,17 @@ const SingleApartment = () => {
             }}
           >
             <h2>Previous Residents</h2>
+            {data?.previousResidents?.length > 0 ? (
+              data?.previousResidents?.map((resident) => (
+                <div key={resident._id}>
+                  <h3>Name: {resident.name}</h3>
+                  <h3>Contact Info: {resident.contactInfo || "---"}</h3>
+                  <h3>isOwner: {resident.isOwner || "false"}</h3>
+                </div>
+              ))
+            ) : (
+              <div>No previous residents</div>
+            )}
           </Box>
         </Box>
         <Box>
@@ -121,7 +161,7 @@ const SingleApartment = () => {
               fontWeight: "bold",
               padding: "10px 20px",
             }}
-            // onClick={buttonElement?.onClick}
+            onClick={handleClickOpenModal}
           >
             Edit
           </Button>

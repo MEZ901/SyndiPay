@@ -12,13 +12,15 @@ class ApartmentsController {
   }
 
   getAllApartments = async (req, res) => {
-    const result = await this.readApartmentUseCase.getAllApartments();
+    const syndic = req.user.id;
+    const result = await this.readApartmentUseCase.getAllApartments(syndic);
     res.status(result.status).json(result.data);
   };
 
   getApartmentById = async (req, res) => {
     const { id } = req.params;
-    const result = await this.readApartmentUseCase.getOneApartment(id);
+    const syndic = req.user.id;
+    const result = await this.readApartmentUseCase.getOneApartment(id, syndic);
     res.status(result.status).json(result.data);
   };
 

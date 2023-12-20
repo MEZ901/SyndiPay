@@ -45,13 +45,16 @@ class ApartmentsServices {
     return apartment;
   };
 
-  getAllApartments = async () => {
-    const apartments = await this.apartmentRepository.find();
+  getAllApartments = async (syndic) => {
+    const apartments = await this.apartmentRepository.find({ syndic });
     return apartments;
   };
 
-  getApartmentById = async (apartmentId) => {
-    const apartment = await this.apartmentRepository.findById(apartmentId);
+  getApartmentById = async (apartmentId, syndic) => {
+    const apartment = await this.apartmentRepository.findOne({
+      _id: apartmentId,
+      syndic,
+    });
     return apartment;
   };
 
