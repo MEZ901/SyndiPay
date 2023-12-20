@@ -22,6 +22,13 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import addPaymentSchema from "../schemas/addPaymentSchema";
 import FormHelperText from "@mui/material/FormHelperText";
 import { useFormik } from "formik";
+import { useGetAllApartmentsQuery } from "../../apartments/redux/apartmentApiSlice";
+import { useGetAllResidentsQuery } from "../../residents/redux/residentApiSlice";
+import {
+  useCreatePaymentMutation,
+  useUpdatePaymentMutation,
+} from "../redux/paymentApiSlice";
+import { useEffect } from "react";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -32,7 +39,13 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const PaymentModal = ({ open, handleClose, colors }) => {
+const PaymentModal = ({ open, handleClose, colors, refetch, paymentData }) => {
+  const { data: apartments } = useGetAllApartmentsQuery();
+  const { data: residents } = useGetAllResidentsQuery();
+
+  const [createPayment] = useCreatePaymentMutation();
+  const [updatePayment] = useUpdatePaymentMutation();
+
   const {
     values,
     errors,
@@ -41,6 +54,7 @@ const PaymentModal = ({ open, handleClose, colors }) => {
     handleSubmit,
     handleBlur,
     setValues,
+    resetForm,
   } = useFormik({
     initialValues: {
       apartment: null,
@@ -52,22 +66,37 @@ const PaymentModal = ({ open, handleClose, colors }) => {
     },
     validationSchema: addPaymentSchema,
     onSubmit: async (data) => {
-      console.log(data);
+      try {
+        if (paymentData) {
+          await updatePayment({
+            id: paymentData.id,
+            body: data,
+          });
+        } else {
+          await createPayment(data);
+        }
+        await refetch();
+        resetForm();
+        handleClose();
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
-  const residents = [
-    { label: "The Shawshank Redemption" },
-    { label: "The Godfather" },
-    { label: "The Godfather: Part II" },
-    { label: "The Dark Knight" },
-    { label: "12 Angry Men" },
-    { label: "Schindler's List" },
-    { label: "Pulp Fiction" },
-    { label: "The Lord of the Rings: The Return of the King" },
-    { label: "The Good, the Bad and the Ugly" },
-    { label: "Fight Club" },
-    { label: "The Lord of the Rings: The Fellowship of the Ring" },
-  ];
+
+  useEffect(() => {
+    if (paymentData) {
+      setValues({
+        apartment: paymentData.apartment,
+        resident: paymentData.resident,
+        amount: paymentData.amount,
+        paymentDate: paymentData.date,
+        paymentDuration: paymentData.paymentDuration,
+        paymentMethod: paymentData.paymentMethod,
+      });
+    }
+  }, [paymentData, setValues]);
+
   const paymentDurations = [
     { label: "1 month" },
     { label: "3 months" },
@@ -88,7 +117,7 @@ const PaymentModal = ({ open, handleClose, colors }) => {
     >
       <form onSubmit={handleSubmit}>
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Add Resident
+          {paymentData ? "Edit Payment" : "Add Payment"}
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -115,12 +144,18 @@ const PaymentModal = ({ open, handleClose, colors }) => {
             <Autocomplete
               disablePortal
               id="combo-box-demo"
-              options={residents}
+              options={apartments}
+              getOptionLabel={(option) => option.apartmentNumber}
               onChange={(event, newValue) =>
-                setValues({ ...values, apartment: newValue?.label || null })
+                setValues({ ...values, apartment: newValue?._id || null })
+              }
+              value={
+                apartments?.find(
+                  (apartment) => apartment._id === values.apartment
+                ) || null
               }
               isOptionEqualToValue={(option, value) =>
-                option.label === value.label
+                option.apartmentNumber === value.apartmentNumber
               }
               renderInput={(params) => (
                 <TextField
@@ -138,11 +173,17 @@ const PaymentModal = ({ open, handleClose, colors }) => {
               disablePortal
               id="combo-box-demo"
               options={residents}
+              getOptionLabel={(option) => option.name}
               onChange={(event, newValue) =>
-                setValues({ ...values, resident: newValue?.label || null })
+                setValues({ ...values, resident: newValue?._id || null })
+              }
+              value={
+                residents?.find(
+                  (resident) => resident._id === values.resident
+                ) || null
               }
               isOptionEqualToValue={(option, value) =>
-                option.label === value.label
+                option.name === value.name
               }
               renderInput={(params) => (
                 <TextField
@@ -170,13 +211,14 @@ const PaymentModal = ({ open, handleClose, colors }) => {
                   <InputAdornment position="end">DH</InputAdornment>
                 }
                 label="Amount"
+                name="amount"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.paymentDate}
-                error={!!touched.paymentDate && !!errors.paymentDate}
+                value={values.amount}
+                error={!!touched.amount && !!errors.amount}
               />
               <FormHelperText id="outlined-weight-helper-text">
-                {touched.paymentDate && errors.paymentDate}
+                {touched.amount && errors.amount}
               </FormHelperText>
             </FormControl>
 
@@ -290,7 +332,7 @@ const PaymentModal = ({ open, handleClose, colors }) => {
               padding: "10px 20px",
             }}
           >
-            create
+            {paymentData ? "Edit" : "Add"}
           </Button>
         </DialogActions>
       </form>
@@ -302,6 +344,8 @@ PaymentModal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   colors: PropTypes.object.isRequired,
+  refetch: PropTypes.func.isRequired,
+  paymentData: PropTypes.object,
 };
 
 export default PaymentModal;

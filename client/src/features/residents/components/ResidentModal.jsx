@@ -56,7 +56,6 @@ const ResidentModal = ({
     onSubmit: async (data) => {
       try {
         if (residentData) {
-          console.log("residentData", residentData);
           await updateResident({
             id: residentData.id,
             body: data,

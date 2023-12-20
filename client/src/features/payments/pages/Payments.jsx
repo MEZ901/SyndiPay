@@ -1,7 +1,6 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
-import { mockDataInvoices } from "../../../data/mockData";
 import Header from "../../../components/Header";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useState } from "react";
@@ -9,19 +8,51 @@ import PaymentModal from "../components/PaymentModal";
 import IconButton from "@mui/material/IconButton";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  useGetAllPaymentsQuery,
+  useDeletePaymentMutation,
+} from "../redux/paymentApiSlice";
 
 const Payments = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [openModal, setOpenModal] = useState(false);
+  const [operationMode, setOperationMode] = useState("add");
+  const [paymentData, setPaymentData] = useState(null);
+
+  const { data, isLoading, refetch } = useGetAllPaymentsQuery();
+  const [deletePayment] = useDeletePaymentMutation();
 
   const handleClickOpenModal = () => {
+    setOperationMode("add");
     setOpenModal(true);
   };
   const handleCloseModal = () => {
     setOpenModal(false);
   };
+
+  const handleDeletePayment = async (id) => {
+    console.log(id);
+    await deletePayment(id);
+    refetch();
+  };
+
+  const handleEditPayment = (row) => {
+    setOperationMode("edit");
+    setPaymentData(row);
+    setOpenModal(true);
+  };
+
+  const payments = data?.map((payment) => ({
+    id: payment._id,
+    apartment: payment.apartment,
+    resident: payment.resident,
+    amount: payment.amount,
+    date: payment.paymentDate,
+    paymentDuration: payment.paymentDuration,
+    paymentMethod: payment.paymentMethod,
+  }));
 
   const columns = [
     { field: "id", headerName: "ID" },
@@ -65,7 +96,7 @@ const Payments = () => {
       field: "actions",
       headerName: "Actions",
       flex: 1,
-      renderCell: () => {
+      renderCell: (e) => {
         return (
           <Box
             sx={{
@@ -74,10 +105,16 @@ const Payments = () => {
               justifyContent: "space-evenly",
             }}
           >
-            <IconButton aria-label="Edit">
+            <IconButton
+              aria-label="Edit"
+              onClick={() => handleEditPayment(e.row)}
+            >
               <ModeEditIcon />
             </IconButton>
-            <IconButton aria-label="Edit">
+            <IconButton
+              aria-label="Delete"
+              onClick={() => handleDeletePayment(e.row.id)}
+            >
               <DeleteIcon />
             </IconButton>
           </Box>
@@ -85,6 +122,8 @@ const Payments = () => {
       },
     },
   ];
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <Box m="20px">
@@ -102,6 +141,8 @@ const Payments = () => {
         open={openModal}
         handleClose={handleCloseModal}
         colors={colors}
+        refetch={refetch}
+        paymentData={operationMode === "edit" ? paymentData : null}
       />
 
       <Box
@@ -133,7 +174,7 @@ const Payments = () => {
           },
         }}
       >
-        <DataGrid rows={mockDataInvoices} columns={columns} />
+        <DataGrid rows={payments} columns={columns} />
       </Box>
     </Box>
   );
