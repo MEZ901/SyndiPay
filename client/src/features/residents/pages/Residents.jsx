@@ -1,7 +1,6 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
-import { mockDataTeam } from "../../../data/mockData";
 import Header from "../../../components/Header";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import IconButton from "@mui/material/IconButton";
@@ -9,18 +8,49 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
 import ResidentModal from "../components/ResidentModal";
+import {
+  useGetAllResidentsQuery,
+  useDeleteResidentMutation,
+} from "../redux/residentApiSlice";
 
 const Residents = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [openModal, setOpenModal] = useState(false);
+  const [operationMode, setOperationMode] = useState("add");
+  const [residentData, setResidentData] = useState(null);
+
+  const { data, isLoading, refetch } = useGetAllResidentsQuery();
+  const [deleteResident] = useDeleteResidentMutation();
+
+  const residents = data?.map((resident) => ({
+    id: resident._id,
+    name: resident.name,
+    contactInfo: resident.contactInfo ? resident.contactInfo : "N/A",
+    apartmentNumber: resident.apartment ? resident.apartment : "N/A",
+    status: resident.apartment ? "currently resides" : "No longer resides",
+    isOwner: resident.isOwner,
+  }));
 
   const handleClickOpenModal = () => {
+    setOperationMode("add");
     setOpenModal(true);
   };
+
   const handleCloseModal = () => {
     setOpenModal(false);
+  };
+
+  const handleDeleteResident = async (id) => {
+    await deleteResident(id);
+    refetch();
+  };
+
+  const handleEditResident = (row) => {
+    setOperationMode("edit");
+    setResidentData(row);
+    setOpenModal(true);
   };
 
   const columns = [
@@ -64,7 +94,7 @@ const Residents = () => {
       field: "actions",
       headerName: "Actions",
       flex: 1,
-      renderCell: () => {
+      renderCell: (e) => {
         return (
           <Box
             sx={{
@@ -73,10 +103,17 @@ const Residents = () => {
               justifyContent: "space-evenly",
             }}
           >
-            <IconButton aria-label="Edit">
+            <IconButton
+              aria-label="Edit"
+              onClick={() => handleEditResident(e.row)}
+            >
               <ModeEditIcon />
             </IconButton>
-            <IconButton aria-label="Edit">
+
+            <IconButton
+              aria-label="Delet"
+              onClick={() => handleDeleteResident(e.row.id)}
+            >
               <DeleteIcon />
             </IconButton>
           </Box>
@@ -84,6 +121,10 @@ const Residents = () => {
       },
     },
   ];
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Box m="20px">
@@ -101,6 +142,8 @@ const Residents = () => {
         open={openModal}
         handleClose={handleCloseModal}
         colors={colors}
+        refetch={refetch}
+        residentData={operationMode === "edit" ? residentData : null}
       />
 
       <Box
@@ -132,7 +175,7 @@ const Residents = () => {
           },
         }}
       >
-        <DataGrid rows={mockDataTeam} columns={columns} />
+        <DataGrid rows={residents} columns={columns} />
       </Box>
     </Box>
   );

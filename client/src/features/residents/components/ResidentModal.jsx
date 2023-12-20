@@ -13,6 +13,11 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { useFormik } from "formik";
 import addResidentSchema from "../schemas/AddResidentSchema";
+import {
+  useCreateResidentMutation,
+  useUpdateResidentMutation,
+} from "../redux/residentApiSlice";
+import { useEffect } from "react";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -22,8 +27,16 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     padding: theme.spacing(1),
   },
 }));
+const ResidentModal = ({
+  open,
+  handleClose,
+  colors,
+  refetch,
+  residentData,
+}) => {
+  const [createResident] = useCreateResidentMutation();
+  const [updateResident] = useUpdateResidentMutation();
 
-const ResidentModal = ({ open, handleClose, colors }) => {
   const {
     values,
     errors,
@@ -32,17 +45,44 @@ const ResidentModal = ({ open, handleClose, colors }) => {
     handleSubmit,
     handleBlur,
     setValues,
+    resetForm,
   } = useFormik({
     initialValues: {
-      name: "",
-      contactInfo: "",
-      isOwner: false,
+      name: residentData?.name || "",
+      contactInfo: residentData?.contactInfo || "",
+      isOwner: residentData?.isOwner || false,
     },
     validationSchema: addResidentSchema,
     onSubmit: async (data) => {
-      console.log(data);
+      try {
+        if (residentData) {
+          console.log("residentData", residentData);
+          await updateResident({
+            id: residentData.id,
+            body: data,
+          });
+        } else {
+          await createResident(data);
+        }
+        await refetch();
+        resetForm();
+        handleClose();
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
+
+  useEffect(() => {
+    if (residentData) {
+      setValues({
+        name: residentData.name,
+        contactInfo:
+          residentData.contactInfo == "N/A" ? "" : residentData.contactInfo,
+        isOwner: residentData.isOwner,
+      });
+    }
+  }, [residentData, setValues]);
   return (
     <BootstrapDialog
       onClose={handleClose}
@@ -51,7 +91,7 @@ const ResidentModal = ({ open, handleClose, colors }) => {
     >
       <form onSubmit={handleSubmit}>
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Add Resident
+          {residentData ? "Edit Resident" : "Add Resident"}
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -127,7 +167,7 @@ const ResidentModal = ({ open, handleClose, colors }) => {
               padding: "10px 20px",
             }}
           >
-            create
+            {residentData ? "Edit" : "Add"}
           </Button>
         </DialogActions>
       </form>
@@ -139,6 +179,8 @@ ResidentModal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   colors: PropTypes.object.isRequired,
+  refetch: PropTypes.func.isRequired,
+  residentData: PropTypes.object,
 };
 
 export default ResidentModal;
